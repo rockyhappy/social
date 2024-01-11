@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "264833222645",
+    "project_id": "twingle-c1acb",
+    "storage_bucket": "twingle-c1acb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:264833222645:android:417790d30ef3f72475c2bc",
+        "android_client_info": {
+          "package_name": "com.devrachit.insta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIgi8VexHWkPcnuW65GeeHf7pJN0ScVYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
