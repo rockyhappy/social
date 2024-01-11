@@ -1,6 +1,6 @@
 package com.devrachit.insta.hilt
 
-import com.devrachit.insta.viewModel.SharedViewModel
+import com.devrachit.insta.Models.SharedViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth

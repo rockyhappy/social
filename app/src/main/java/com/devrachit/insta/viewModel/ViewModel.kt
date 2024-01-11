@@ -1,26 +1,19 @@
 package com.devrachit.insta.viewModel
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.devrachit.insta.Constants.Constants.Companion.USER_NODE
-import com.devrachit.insta.hilt.Application
+import com.devrachit.insta.Models.SharedViewModel
 import com.devrachit.insta.util.isValidEmail
 import com.devrachit.insta.util.isValidPassword
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -30,7 +23,6 @@ class LCViewModel @Inject constructor(
     val auth: FirebaseAuth,
     val db: FirebaseFirestore,
     val storage: FirebaseStorage,
-    @ApplicationContext context: Context,
     val sharedViewModel: SharedViewModel
 ) : ViewModel() {
 
@@ -166,6 +158,7 @@ class LCViewModel @Inject constructor(
 
     fun refreshEmailVerification() {
         auth.currentUser?.reload()
+        loading.value = true
         if (auth.currentUser?.isEmailVerified == true) {
                 userEmailVerified.value = true
             val user = hashMapOf(

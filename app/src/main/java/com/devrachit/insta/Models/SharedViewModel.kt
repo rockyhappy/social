@@ -1,4 +1,4 @@
-package com.devrachit.insta.viewModel
+package com.devrachit.insta.Models
 
 
 import androidx.lifecycle.ViewModel

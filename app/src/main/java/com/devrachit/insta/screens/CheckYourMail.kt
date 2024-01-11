@@ -32,15 +32,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.R
+import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
 import com.devrachit.insta.ui.theme.lightGray
 import com.devrachit.insta.ui.theme.primaryColor
 import com.devrachit.insta.ui.theme.successColor
+import com.devrachit.insta.util.navigateToScreen
 import com.devrachit.insta.viewModel.LCViewModel
 
 @Composable
 fun CheckYourMail(navController: NavController,viewModel: LCViewModel) {
 
+    if(viewModel.userEmailVerified.value){
+        navigateToScreen(
+            navController = navController,
+            route = Screen.DashboardScreen.route
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,8 +97,8 @@ fun CheckYourMail(navController: NavController,viewModel: LCViewModel) {
             textAlign = TextAlign.Center
         )
         Text(
-            text=if(viewModel.userEmailVerified.value)"Email Not Verified" else "Email Verified",
-            color=if(viewModel.userEmailVerified.value)errorColor else successColor,
+            text=if(!viewModel.userEmailVerified.value)"Email Not Verified" else "Email Verified",
+            color=if(!viewModel.userEmailVerified.value)errorColor else successColor,
             fontSize = 20.sp,
             modifier= Modifier
                 .wrapContentHeight()
@@ -111,7 +119,8 @@ fun CheckYourMail(navController: NavController,viewModel: LCViewModel) {
             colors= ButtonDefaults.buttonColors(
                 containerColor = primaryColor,
                 contentColor = Color.Black
-            )
+            ),
+            enabled = !viewModel.loading.value
         ) {
             if (viewModel.loading.value) {
                 CircularProgressIndicator(
