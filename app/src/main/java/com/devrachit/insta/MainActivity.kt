@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.devrachit.insta.screens.CheckYourMail
 import com.devrachit.insta.ui.theme.InstaTheme
 import com.devrachit.insta.screens.ChoiceScreen
 import com.devrachit.insta.screens.DashboardScreen
@@ -33,6 +34,8 @@ sealed class Screen(val route:String)
     object SignupScreen :Screen("SignupScreen")
     object ChoiceScreen :Screen("ChoiceScreen")
     object DashboardScreen :Screen("DashboardScreen")
+
+    object CheckYourMail :Screen("CheckYourMail")
 
 }
 @AndroidEntryPoint
@@ -72,6 +75,9 @@ class MainActivity : ComponentActivity() {
             }
             composable(com.devrachit.insta.Screen.DashboardScreen.route){
                 DashboardScreen(navController = navController,viewModel = vm)
+            }
+            composable(com.devrachit.insta.Screen.CheckYourMail.route){
+                CheckYourMail(navController = navController,viewModel = vm)
             }
         }
     }

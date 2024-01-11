@@ -1,5 +1,6 @@
 package com.devrachit.insta.hilt
 
+import com.devrachit.insta.viewModel.SharedViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -23,4 +24,6 @@ class HiltModule {
 
     @Provides
     fun provideStorage(): FirebaseStorage = Firebase.storage
+    @Provides
+    fun provideSharedViewModel(): SharedViewModel = SharedViewModel()
 }

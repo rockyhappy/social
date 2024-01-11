@@ -42,6 +42,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.font.FontWeight
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.gray
@@ -95,40 +96,40 @@ fun ChoiceScreen(navController: NavController, viewModel: LCViewModel) {
                 navController.navigate(Screen.SignupScreen.route) {
                     popUpTo(Screen.ChoiceScreen.route) { inclusive = false }
                 }
-                },
-                modifier = Modifier
-                    .padding(top = 96.dp, start = 24.dp, end = 24.dp)
-                    .height(54.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = primaryColor,
-                    contentColor = Color.Black
-                )
+            },
+            modifier = Modifier
+                .padding(top = 96.dp, start = 24.dp, end = 24.dp)
+                .height(54.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = primaryColor,
+                contentColor = Color.Black
+            )
 
-                ) {
-                Text("Get Started", fontFamily = customFontFamily)
-            }
-                OutlinedButton(
-                    onClick = {
-                        navController.navigate(Screen.LoginScreen.route) {
-                            popUpTo(Screen.ChoiceScreen.route) { inclusive = false }
-                        }
-                    },
-                    modifier = Modifier
-                        .padding(top = 16.dp, start = 24.dp, end = 24.dp)
-                        .height(54.dp)
-                        .fillMaxWidth(),
-                    border = BorderStroke(1.dp, gray),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        contentColor = Color.Transparent
-                    )
-
-                ) {
-                    Text("Login", color = Color.White, fontFamily = customFontFamily)
+        ) {
+            Text("Get Started", fontFamily = customFontFamily, fontWeight = FontWeight.Bold)
+        }
+        OutlinedButton(
+            onClick = {
+                navController.navigate(Screen.LoginScreen.route) {
+                    popUpTo(Screen.ChoiceScreen.route) { inclusive = false }
                 }
-            }
+            },
+            modifier = Modifier
+                .padding(top = 16.dp, start = 24.dp, end = 24.dp)
+                .height(54.dp)
+                .fillMaxWidth(),
+            border = BorderStroke(1.dp, gray),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.Transparent
+            )
 
+        ) {
+            Text("Login", color = Color.White, fontFamily = customFontFamily)
+        }
     }
+
+}

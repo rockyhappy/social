@@ -3,6 +3,7 @@ package com.devrachit.insta.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -90,27 +91,14 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
                 userNameState.value.text.trim(),
                 emailState.value.text.trim(),
                 passwordState.value.text
-                )
+            )
         }
-//        val validationResult = viewModel.userNameValidationResult.value
-//
-//        if (validationResult != null) {
-//            if (validationResult == true) {
-//                viewModel.signUp(
-//                    emailState.value.text.trim(),
-//                    passwordState.value.text,
-//                    userNameState.value.text.trim()
-//                )
-//            } else {
-//                // Handle the case where the username is not valid
-//            }
-//        }
     }
 
-    if(viewModel.signupComplete.value){
+    if (viewModel.signupComplete.value) {
         navigateToScreen(
             navController = navController,
-            route = Screen.DashboardScreen.route
+            route = Screen.CheckYourMail.route
         )
     }
 
@@ -280,7 +268,8 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
-            )
+            ),
+            enabled = !viewModel.loading.value
 
         ) {
             ButtonImage(painter = painterResource(id = R.drawable.google))
@@ -295,7 +284,7 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
             onClick = {
                 navigateToScreen(
                     navController = navController,
-                    route = Screen.LoginScreen.route
+                    route = Screen.CheckYourMail.route
                 )
             },
             modifier = Modifier
@@ -307,7 +296,8 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
-            )
+            ),
+            enabled = !viewModel.loading.value
 
         ) {
             ButtonImage(painter = painterResource(id = R.drawable.facebook))
@@ -320,13 +310,24 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
         }
         Row(
             modifier = Modifier
-                .padding(42.dp)
+                .padding(top = 42.dp, bottom = 24.dp)
         ) {
-            Text(text = "Don't have an Account? ", fontFamily = Constants.customFontFamily)
             Text(
-                text = "SignUp",
+                text = "Already Have an Account? ",
+                fontFamily = Constants.customFontFamily,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "SignIn",
                 fontWeight = FontWeight.Bold,
-                fontFamily = Constants.customFontFamily
+                fontFamily = Constants.customFontFamily,
+                fontSize = 16.sp,
+                modifier = Modifier.clickable {
+                    navigateToScreen(
+                        navController = navController,
+                        route = Screen.LoginScreen.route
+                    )
+                }
             )
         }
     }
