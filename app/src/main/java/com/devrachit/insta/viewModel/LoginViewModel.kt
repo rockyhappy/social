@@ -40,35 +40,39 @@ class LoginViewModel @Inject constructor(
 
 
     fun loginUser(email: String, password: String) {
-        sharedViewModel.email = email
-        sharedViewModel.password = password
-        sharedViewModel.userName = (Math.random()*100000).toString()
         viewModelScope.launch {
             loading.value = true
             try {
                 val signInResult = auth.signInWithEmailAndPassword(email, password).await()
                 if (signInResult.user != null) {
-                    loginComplete.value = true
                     auth.currentUser?.reload()?.await()
-                    if (auth.currentUser?.isEmailVerified == false) {
+                    sharedViewModel.email = email
+                    sharedViewModel.password = password
+                    sharedViewModel.userName = db.collection("users").document(auth.currentUser?.uid!!).get().await().get("userName").toString()
+                    sharedViewModel.emailVerified = db.collection("users").document(auth.currentUser?.uid!!).get().await().get("emailVerified").toString().toBoolean()
+                    println("Email Verified: ${auth.currentUser?.isEmailVerified}")
+                    if (
+//                        auth.currentUser?.isEmailVerified == false ||
+                        !sharedViewModel.emailVerified
+                        )
+                    {
                         auth.currentUser?.sendEmailVerification()?.await()
                         println("Email Sent")
                         if (auth.currentUser?.isEmailVerified == true) {
                             userEmailVerified.value = true
                         } else {
-                            // Handle the case where email verification failed
                             println("Email verification failed")
                         }
                     } else {
                         userEmailVerified.value = true
                     }
                 } else {
-                    loginComplete.value = false
+                    println("Login failed")
                 }
             } catch (e: Exception) {
-                // Handle exceptions (e.g., network issues, Firebase errors)
                 println("Login failed. Exception: ${e.message}")
             } finally {
+                loginComplete.value = true
                 loading.value = false
             }
         }

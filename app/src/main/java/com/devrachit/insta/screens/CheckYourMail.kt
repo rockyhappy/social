@@ -43,9 +43,9 @@ import com.devrachit.insta.viewModel.LCViewModel
 import com.devrachit.insta.viewModel.VerifyEmailViewModel
 
 @Composable
-fun CheckYourMail(navController: NavController,viewModel: VerifyEmailViewModel) {
+fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel) {
 
-    if(viewModel.userEmailVerified.value){
+    if (viewModel.userEmailVerified.value) {
         navigateToScreen(navController = navController, route = Screen.DashboardScreen.route)
     }
 
@@ -97,24 +97,27 @@ fun CheckYourMail(navController: NavController,viewModel: VerifyEmailViewModel) 
             textAlign = TextAlign.Center
         )
         Text(
-            text=if(!viewModel.userEmailVerified.value)"Email Not Verified" else "Email Verified",
-            color=if(!viewModel.userEmailVerified.value)errorColor else successColor,
+            text = if (!viewModel.userEmailVerified.value) "Email Not Verified" else "Email Verified",
+            color = if (!viewModel.userEmailVerified.value) errorColor else successColor,
             fontSize = 20.sp,
-            modifier= Modifier
+            modifier = Modifier
                 .wrapContentHeight()
                 .padding(top = 72.dp)
                 .wrapContentWidth(),
             fontFamily = Constants.customFontFamily
         )
         Spacer(modifier = Modifier.weight(1f))
-        Text(text="Refresh",color = Color.White,fontSize = 16.sp,modifier = Modifier
-            .padding(bottom = 24.dp)
-            .wrapContentHeight()
-            .wrapContentWidth()
-            .clickable {
-                viewModel.sendEmailVerification()
-            }
-            ,
+        Text(
+            text = "Resend",
+            color = Color.White,
+            fontSize = 16.sp,
+            modifier = Modifier
+                .padding(bottom = 24.dp)
+                .wrapContentHeight()
+                .wrapContentWidth()
+                .clickable {
+                    viewModel.sendEmailVerification()
+                },
             fontFamily = Constants.customFontFamily,
             textAlign = TextAlign.Center)
         Button(
@@ -125,8 +128,8 @@ fun CheckYourMail(navController: NavController,viewModel: VerifyEmailViewModel) 
                 .padding(bottom = 24.dp)
                 .height(54.dp)
                 .fillMaxWidth(),
-            shape= RoundedCornerShape(16.dp),
-            colors= ButtonDefaults.buttonColors(
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
                 containerColor = primaryColor,
                 contentColor = Color.Black
             ),

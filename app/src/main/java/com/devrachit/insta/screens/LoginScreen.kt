@@ -25,6 +25,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -81,6 +82,23 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
 
     var passwordIncorrectMessage="Incorrect Message"
     var emailIncorrectMessage="Incorrect Email"
+
+    LaunchedEffect(viewModel.loginComplete.value) {
+        if (viewModel.loginComplete.value) {
+            if (viewModel.userEmailVerified.value) {
+                navigateToScreen(
+                    navController = navController,
+                    route = Screen.DashboardScreen.route
+                )
+            } else {
+                navigateToScreen(
+                    navController = navController,
+                    route = Screen.CheckYourMail.route
+                )
+            }
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -170,24 +188,24 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
         }
         Button(
             onClick = {
-                if(viewModel.loginCheck(emailState.value.text,passwordState.value.text)
+                if(viewModel.loginCheck(emailState.value.text.trim(),passwordState.value.text)
                     && isValidEmail(emailState.value.text)
                     && isValidPassword(passwordState.value.text)
                     )
                 {
                    viewModel.loginUser(emailState.value.text,passwordState.value.text)
-                    if(viewModel.userEmailVerified.value){
-                        navigateToScreen(
-                            navController = navController,
-                            route = Screen.DashboardScreen.route
-                        )
-                    }
-                    else{
-                        navigateToScreen(
-                            navController = navController,
-                            route = Screen.CheckYourMail.route
-                        )
-                    }
+//                    if(viewModel.userEmailVerified.value){
+//                        navigateToScreen(
+//                            navController = navController,
+//                            route = Screen.DashboardScreen.route
+//                        )
+//                    }
+//                    else{
+//                        navigateToScreen(
+//                            navController = navController,
+//                            route = Screen.CheckYourMail.route
+//                        )
+//                    }
                 }
             },
             modifier = Modifier
