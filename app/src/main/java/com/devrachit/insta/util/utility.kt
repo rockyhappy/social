@@ -207,7 +207,7 @@ fun SelfRunningImageCarousel(images: List<Painter>, interval: Long = 5000L) {
 }
 
 @Composable
-fun errorFeild(message:String=""){
+fun errorFeild(message:String="", showMessage: Boolean){
     Row(
         modifier = Modifier
             .fillMaxWidth(),
@@ -215,7 +215,7 @@ fun errorFeild(message:String=""){
         verticalAlignment = Alignment.Bottom
     ) {
         Text(
-            text = message,
+            text = if(!showMessage)message else "",
             modifier = Modifier
                 .padding(top = 8.dp, start = 24.dp),
             fontFamily = customFontFamily,

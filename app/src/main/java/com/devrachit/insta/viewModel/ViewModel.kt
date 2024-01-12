@@ -105,26 +105,25 @@ class LCViewModel @Inject constructor(
                         ?.addOnFailureListener {
                             println("Email not sent")
                         }
+                    val user = hashMapOf(
+                        "email" to email,
+                        "userName" to userName,
+                        "uid" to auth.currentUser?.uid,
+                        "profilePic" to "https://firebasestorage.googleapis.com/v0/b/twingle-c1acb.appspot.com/o/avatar.png?alt=media&token=cc768fc6-57c1-4326-a874-4f0fd3bbe5de",
+                        "emailVerified" to false,
+                    )
+
+                    db.collection(USER_NODE).document(auth.currentUser?.uid.toString()).set(user)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                println("User Created")
+                            }
+                        }
+
 
                     sharedViewModel.email = email
                     sharedViewModel.userName = userName
                     sharedViewModel.password = password
-//                    val user = hashMapOf(
-//                        "email" to email,
-//                        "userName" to userName,
-//                        "uid" to auth.currentUser?.uid,
-//                        "profilePic" to "https://firebasestorage.googleapis.com/v0/b/insta-clone-1e9f0.appspot.com/o/profilePic%2Fdefault.png?alt=media&token=8b8b8b1a-7b9e-4b9e-9b0a-9b9b9b9b9b9b",
-//                        "emailVerified" to false,
-//                    )
-//
-//                    db.collection(USER_NODE).document(auth.currentUser?.uid.toString()).set(user)
-//                        .addOnCompleteListener { task ->
-//                            if (task.isSuccessful) {
-//                                println("User Created")
-//                            }
-//                            loading.value=false
-//                            signupComplete.value=true
-//                        }
                     loading.value = false
                     signupComplete.value = true
                 }
@@ -157,27 +156,34 @@ class LCViewModel @Inject constructor(
     }
 
     fun refreshEmailVerification() {
-        auth.currentUser?.reload()
         loading.value = true
-        if (auth.currentUser?.isEmailVerified == true) {
+        auth.currentUser?.reload()?.addOnCompleteListener { reloadTask ->
+            if (reloadTask.isSuccessful) {
+                println("Reloaded")
+            }
+            loading.value = true
+            if (auth.currentUser?.isEmailVerified == true) {
                 userEmailVerified.value = true
-            val user = hashMapOf(
-                "email" to sharedViewModel.email,
-                "userName" to sharedViewModel.userName,
-                "uid" to auth.currentUser?.uid,
-                "profilePic" to "https://firebasestorage.googleapis.com/v0/b/insta-clone-1e9f0.appspot.com/o/profilePic%2Fdefault.png?alt=media&token=8b8b8b1a-7b9e-4b9e-9b0a-9b9b9b9b9b9b",
-                "emailVerified" to auth.currentUser?.isEmailVerified
-            )
+                val user = hashMapOf(
+                    "email" to sharedViewModel.email,
+                    "userName" to sharedViewModel.userName,
+                    "uid" to auth.currentUser?.uid,
+                    "profilePic" to "https://firebasestorage.googleapis.com/v0/b/insta-clone-1e9f0.appspot.com/o/profilePic%2Fdefault.png?alt=media&token=8b8b8b1a-7b9e-4b9e-9b0a-9b9b9b9b9b9b",
+                    "emailVerified" to auth.currentUser?.isEmailVerified
+                )
 
-            db.collection(USER_NODE).document(auth.currentUser?.uid.toString()).set(user)
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        println("User Created")
+                db.collection(USER_NODE).document(auth.currentUser?.uid.toString()).set(user)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            println("User Created")
+                        }
+                        loading.value = false
+                        signupComplete.value = true
                     }
-                    loading.value = false
-                    signupComplete.value = true
-                }
+
+            }
         }
+        loading.value = false
     }
 
 }

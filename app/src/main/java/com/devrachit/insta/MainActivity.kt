@@ -25,6 +25,8 @@ import com.devrachit.insta.screens.LoginScreen
 import com.devrachit.insta.screens.SignupScreen
 import com.devrachit.insta.screens.SplashScreen
 import com.devrachit.insta.viewModel.LCViewModel
+import com.devrachit.insta.viewModel.LoginViewModel
+import com.devrachit.insta.viewModel.VerifyEmailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 sealed class Screen(val route:String)
@@ -60,12 +62,14 @@ class MainActivity : ComponentActivity() {
     fun TwingleNavigation(){
         val navController = rememberNavController()
         val vm = hiltViewModel<LCViewModel>()
+        val LoginViewModel= hiltViewModel<LoginViewModel>()
+        val VerifyEmailViewModel= hiltViewModel<VerifyEmailViewModel>()
         NavHost(navController = navController, startDestination = com.devrachit.insta.Screen.ChoiceScreen.route){
             composable(com.devrachit.insta.Screen.SplashScreen.route){
                 SplashScreen(navController = navController, viewModel = vm)
             }
             composable(com.devrachit.insta.Screen.LoginScreen.route){
-                LoginScreen(navController = navController, viewModel = vm)
+                LoginScreen(navController = navController, viewModel = LoginViewModel)
             }
             composable(com.devrachit.insta.Screen.SignupScreen.route){
                 SignupScreen(navController = navController,viewModel = vm)
@@ -77,7 +81,7 @@ class MainActivity : ComponentActivity() {
                 DashboardScreen(navController = navController,viewModel = vm)
             }
             composable(com.devrachit.insta.Screen.CheckYourMail.route){
-                CheckYourMail(navController = navController,viewModel = vm)
+                CheckYourMail(navController = navController,viewModel = VerifyEmailViewModel)
             }
         }
     }

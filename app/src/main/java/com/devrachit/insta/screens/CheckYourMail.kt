@@ -1,6 +1,7 @@
 package com.devrachit.insta.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -39,16 +40,15 @@ import com.devrachit.insta.ui.theme.primaryColor
 import com.devrachit.insta.ui.theme.successColor
 import com.devrachit.insta.util.navigateToScreen
 import com.devrachit.insta.viewModel.LCViewModel
+import com.devrachit.insta.viewModel.VerifyEmailViewModel
 
 @Composable
-fun CheckYourMail(navController: NavController,viewModel: LCViewModel) {
+fun CheckYourMail(navController: NavController,viewModel: VerifyEmailViewModel) {
 
     if(viewModel.userEmailVerified.value){
-        navigateToScreen(
-            navController = navController,
-            route = Screen.DashboardScreen.route
-        )
+        navigateToScreen(navController = navController, route = Screen.DashboardScreen.route)
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,7 +76,7 @@ fun CheckYourMail(navController: NavController,viewModel: LCViewModel) {
             fontFamily = Constants.customFontFamily
         )
         Text(
-            text = viewModel.emailData,
+            text = viewModel.email,
             color = lightGray,
             fontSize = 24.sp,
             modifier = Modifier
@@ -107,9 +107,19 @@ fun CheckYourMail(navController: NavController,viewModel: LCViewModel) {
             fontFamily = Constants.customFontFamily
         )
         Spacer(modifier = Modifier.weight(1f))
+        Text(text="Refresh",color = Color.White,fontSize = 16.sp,modifier = Modifier
+            .padding(bottom = 24.dp)
+            .wrapContentHeight()
+            .wrapContentWidth()
+            .clickable {
+                viewModel.sendEmailVerification()
+            }
+            ,
+            fontFamily = Constants.customFontFamily,
+            textAlign = TextAlign.Center)
         Button(
             onClick = {
-                viewModel.refreshEmailVerification()
+                viewModel.checkEmailVerification()
             },
             modifier = Modifier
                 .padding(bottom = 24.dp)

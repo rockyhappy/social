@@ -54,12 +54,16 @@ import com.devrachit.insta.ui.theme.gray
 import com.devrachit.insta.util.ButtonImage
 import com.devrachit.insta.util.CommonDivider
 import com.devrachit.insta.util.errorFeild
+import com.devrachit.insta.util.errorFeild2
+import com.devrachit.insta.util.isValidEmail
+import com.devrachit.insta.util.isValidPassword
 import com.devrachit.insta.util.navigateToScreen
 import com.devrachit.insta.viewModel.LCViewModel
+import com.devrachit.insta.viewModel.LoginViewModel
 
 
 @Composable
-fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
     val emailState = remember {
         mutableStateOf(TextFieldValue())
     }
@@ -75,7 +79,6 @@ fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
 
     val scrollState = rememberScrollState()
 
-    val h=viewModel.emailValid.value
     var passwordIncorrectMessage="Incorrect Message"
     var emailIncorrectMessage="Incorrect Email"
 
@@ -115,13 +118,14 @@ fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
                 Text(text = "Enter Email", fontFamily = customFontFamily)
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = primaryColor,
-                focusedLabelColor = primaryColor,
-                cursorColor = primaryColor,
-                unfocusedBorderColor = if(viewModel.emailValid.value) gray else errorColor
+                focusedBorderColor = if(viewModel.emailValid.value) primaryColor else errorColor,
+                focusedLabelColor = if(viewModel.emailValid.value) primaryColor else errorColor,
+                cursorColor = if(viewModel.emailValid.value) primaryColor else errorColor,
+                unfocusedBorderColor = if(viewModel.emailValid.value) gray else errorColor,
+                unfocusedLabelColor = if(viewModel.emailValid.value) gray else errorColor
             )
         )
-        errorFeild(emailIncorrectMessage)
+        errorFeild2(emailIncorrectMessage,viewModel.emailValid.value)
         OutlinedTextField(
             value = passwordState.value,
             onValueChange = { passwordState.value = it },
@@ -134,10 +138,11 @@ fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
                 Text(text = "Enter Password", fontFamily = customFontFamily)
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = primaryColor,
-                focusedLabelColor = primaryColor,
-                cursorColor = primaryColor,
-                unfocusedBorderColor = gray
+                focusedBorderColor = if(viewModel.passwordValid.value) primaryColor else errorColor,
+                focusedLabelColor = if (viewModel.passwordValid.value) primaryColor else errorColor,
+                cursorColor = if (viewModel.passwordValid.value) primaryColor else errorColor,
+                unfocusedBorderColor = if (viewModel.passwordValid.value) gray else errorColor,
+                unfocusedLabelColor = if (viewModel.passwordValid.value) gray else errorColor
             ),
             trailingIcon = {
                 val image = if (passwordVisibility)
@@ -149,21 +154,42 @@ fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
                 }
             }
         )
-        errorFeild(passwordIncorrectMessage)
+        errorFeild(passwordIncorrectMessage,viewModel.passwordValid.value)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(top = 6.dp, end = 24.dp)
-                .clickable {
-
-                },
+                ,
             horizontalArrangement = Arrangement.End
         ) {
-            Text(text = "Forgot Password?", fontSize = 14.sp, fontFamily = customFontFamily)
+            Text(text = "Forgot Password?",
+                fontSize = 14.sp,
+                fontFamily = customFontFamily,
+                modifier = Modifier.clickable {  })
         }
         Button(
-            onClick = { /* Handle button click */ },
+            onClick = {
+                if(viewModel.loginCheck(emailState.value.text,passwordState.value.text)
+                    && isValidEmail(emailState.value.text)
+                    && isValidPassword(passwordState.value.text)
+                    )
+                {
+                   viewModel.loginUser(emailState.value.text,passwordState.value.text)
+                    if(viewModel.userEmailVerified.value){
+                        navigateToScreen(
+                            navController = navController,
+                            route = Screen.DashboardScreen.route
+                        )
+                    }
+                    else{
+                        navigateToScreen(
+                            navController = navController,
+                            route = Screen.CheckYourMail.route
+                        )
+                    }
+                }
+            },
             modifier = Modifier
                 .padding(top = 16.dp, start = 24.dp, end = 24.dp)
                 .height(54.dp)
