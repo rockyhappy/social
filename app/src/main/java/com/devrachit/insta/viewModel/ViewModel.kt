@@ -23,7 +23,9 @@ class LCViewModel @Inject constructor(
     val auth: FirebaseAuth,
     val db: FirebaseFirestore,
     val storage: FirebaseStorage,
-    val sharedViewModel: SharedViewModel
+    val sharedViewModel: SharedViewModel,
+//    val oneTapClient: SignInClient,
+//    val context: Context,
 ) : ViewModel() {
 
 
@@ -36,6 +38,8 @@ class LCViewModel @Inject constructor(
     val userData = mutableStateOf(hashMapOf<String, Any>())
     var emailData = ""
     val userEmailVerified= mutableStateOf(false)
+
+//    private val googleAuthUiClient = GoogleAuthUiClient(context, oneTapClient)
 
     private val _userNameValidationResult = MutableLiveData<Boolean>()
     val userNameValidationResult: LiveData<Boolean> get() = _userNameValidationResult
@@ -185,5 +189,31 @@ class LCViewModel @Inject constructor(
         }
         loading.value = false
     }
+
+    fun createUser(email :String , UserName : String, Uid :String)
+    {
+        sharedViewModel.email=email
+        sharedViewModel.uid=Uid
+        sharedViewModel.userName=UserName
+        val user = hashMapOf(
+            "email" to sharedViewModel.email,
+            "userName" to sharedViewModel.userName,
+            "uid" to auth.currentUser?.uid,
+            "profilePic" to "https://firebasestorage.googleapis.com/v0/b/insta-clone-1e9f0.appspot.com/o/profilePic%2Fdefault.png?alt=media&token=8b8b8b1a-7b9e-4b9e-9b0a-9b9b9b9b9b9b",
+            "emailVerified" to true
+        )
+
+        db.collection(USER_NODE).document(auth.currentUser?.uid.toString()).set(user)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    println("User Created")
+                }
+                loading.value = false
+                signupComplete.value = true
+            }
+
+    }
+
+
 
 }

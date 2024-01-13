@@ -1,5 +1,10 @@
 package com.devrachit.insta.screens
 
+import android.app.Activity
+import android.content.Intent
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -28,6 +33,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,15 +42,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.devrachit.insta.Constants.Constants
+import com.devrachit.insta.Constants.Constants.Companion.web_Client_Id
 import com.devrachit.insta.R
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
@@ -55,6 +65,11 @@ import com.devrachit.insta.util.CommonDivider
 import com.devrachit.insta.util.errorFeild2
 import com.devrachit.insta.util.navigateToScreen
 import com.devrachit.insta.viewModel.LCViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 
 @Composable
@@ -98,6 +113,43 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
             navController = navController,
             route = Screen.CheckYourMail.route
         )
+    }
+
+
+    val context = LocalContext.current
+    val token = web_Client_Id
+    val launcherNav = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        navController.navigate(Screen.DashboardScreen.route)
+    }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) {
+        val task =
+            try {
+                val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                    .getResult(ApiException::class.java)
+                val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+                FirebaseAuth.getInstance().signInWithCredential(credential)
+                    .addOnCompleteListener {task->
+                        if (task.isSuccessful) {
+
+                            val user = FirebaseAuth.getInstance().currentUser
+                            user?.let {
+                                val uid = it.uid.toString()
+                                val email = it.email.toString()
+                                val username = it.displayName.toString()
+                                viewModel.createUser(email,username,uid)
+                            }
+
+                            navigateToScreen(navController,Screen.DashboardScreen.route)
+                        }
+                    }
+            }
+            catch (e: ApiException) {
+                Log.w("TAG", "GoogleSign in Failed", e)
+            }
     }
 
     Column(
@@ -252,10 +304,15 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
 
         OutlinedButton(
             onClick = {
-                navigateToScreen(
-                    navController = navController,
-                    route = Screen.LoginScreen.route
-                )
+
+                    val gso = GoogleSignInOptions
+                        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(token)
+                        .requestEmail()
+                        .build()
+                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                    launcher.launch(googleSignInClient.signInIntent)
+
             },
             modifier = Modifier
                 .padding(top = 32.dp)

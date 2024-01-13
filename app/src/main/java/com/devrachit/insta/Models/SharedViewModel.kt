@@ -10,6 +10,7 @@ class SharedViewModel  @Inject constructor() : ViewModel() {
     var userName: String = ""
     var password: String = ""
     var emailVerified: Boolean = false
+    var uid = ""
 
     fun clearData() {
         email = ""

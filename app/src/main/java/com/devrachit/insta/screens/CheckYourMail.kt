@@ -49,6 +49,7 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
         navigateToScreen(navController = navController, route = Screen.DashboardScreen.route)
     }
 
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,7 +77,7 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
             fontFamily = Constants.customFontFamily
         )
         Text(
-            text = viewModel.email,
+            text = viewModel.sharedViewModel.email,
             color = lightGray,
             fontSize = 24.sp,
             modifier = Modifier

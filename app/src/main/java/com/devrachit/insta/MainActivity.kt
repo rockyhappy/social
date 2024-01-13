@@ -26,6 +26,7 @@ import com.devrachit.insta.screens.SignupScreen
 import com.devrachit.insta.screens.SplashScreen
 import com.devrachit.insta.viewModel.LCViewModel
 import com.devrachit.insta.viewModel.LoginViewModel
+import com.devrachit.insta.viewModel.SplashScreenViewModel
 import com.devrachit.insta.viewModel.VerifyEmailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -64,9 +65,10 @@ class MainActivity : ComponentActivity() {
         val vm = hiltViewModel<LCViewModel>()
         val LoginViewModel= hiltViewModel<LoginViewModel>()
         val VerifyEmailViewModel= hiltViewModel<VerifyEmailViewModel>()
+        val splashScreenViewModel= hiltViewModel<SplashScreenViewModel>()
         NavHost(navController = navController, startDestination = com.devrachit.insta.Screen.ChoiceScreen.route){
             composable(com.devrachit.insta.Screen.SplashScreen.route){
-                SplashScreen(navController = navController, viewModel = vm)
+                SplashScreen(navController = navController, viewModel = splashScreenViewModel)
             }
             composable(com.devrachit.insta.Screen.LoginScreen.route){
                 LoginScreen(navController = navController, viewModel = LoginViewModel)
