@@ -2,4 +2,7 @@
 <resources>
 
     <style name="Theme.Insta" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="RemoveSplashScreenTheme" >
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
 </resources>

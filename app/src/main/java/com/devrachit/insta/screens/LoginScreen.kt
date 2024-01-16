@@ -1,5 +1,8 @@
 package com.devrachit.insta.screens
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,28 +28,27 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.devrachit.insta.R
 import com.devrachit.insta.ui.theme.primaryColor
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
@@ -54,12 +56,20 @@ import com.devrachit.insta.ui.theme.gray
 import com.devrachit.insta.util.ButtonImage
 import com.devrachit.insta.util.CommonDivider
 import com.devrachit.insta.util.errorFeild
+import com.devrachit.insta.util.errorFeild2
+import com.devrachit.insta.util.isValidEmail
+import com.devrachit.insta.util.isValidPassword
 import com.devrachit.insta.util.navigateToScreen
-import com.devrachit.insta.viewModel.LCViewModel
+import com.devrachit.insta.viewModel.LoginViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 
 @Composable
-fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
+fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
     val emailState = remember {
         mutableStateOf(TextFieldValue())
     }
@@ -75,9 +85,60 @@ fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
 
     val scrollState = rememberScrollState()
 
-    val h=viewModel.emailValid.value
     var passwordIncorrectMessage="Incorrect Message"
     var emailIncorrectMessage="Incorrect Email"
+
+    LaunchedEffect(viewModel.loginComplete.value) {
+        if (viewModel.loginComplete.value) {
+            if (viewModel.userEmailVerified.value) {
+                navigateToScreen(
+                    navController = navController,
+                    route = Screen.DashboardScreen.route
+                )
+            } else {
+                navigateToScreen(
+                    navController = navController,
+                    route = Screen.CheckYourMail.route
+                )
+            }
+        }
+    }
+    val context = LocalContext.current
+    val token = Constants.web_Client_Id
+    val launcherNav = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        navController.navigate(Screen.DashboardScreen.route)
+    }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) {
+        val task =
+            try {
+                val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                    .getResult(ApiException::class.java)
+                val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+                FirebaseAuth.getInstance().signInWithCredential(credential)
+                    .addOnCompleteListener {task->
+                        if (task.isSuccessful) {
+
+                            val user = FirebaseAuth.getInstance().currentUser
+                            user?.let {
+                                val uid = it.uid.toString()
+                                val email = it.email.toString()
+                                val username = it.displayName.toString()
+                                viewModel.updateUser(email, username,uid)
+                            }
+
+                            navigateToScreen(navController,Screen.DashboardScreen.route)
+                        }
+                    }
+            }
+            catch (e: ApiException) {
+                Log.w("TAG", "GoogleSign in Failed", e)
+            }
+    }
+
 
     Column(
         modifier = Modifier
@@ -115,13 +176,14 @@ fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
                 Text(text = "Enter Email", fontFamily = customFontFamily)
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = primaryColor,
-                focusedLabelColor = primaryColor,
-                cursorColor = primaryColor,
-                unfocusedBorderColor = if(viewModel.emailValid.value) gray else errorColor
+                focusedBorderColor = if(viewModel.emailValid.value) primaryColor else errorColor,
+                focusedLabelColor = if(viewModel.emailValid.value) primaryColor else errorColor,
+                cursorColor = if(viewModel.emailValid.value) primaryColor else errorColor,
+                unfocusedBorderColor = if(viewModel.emailValid.value) gray else errorColor,
+                unfocusedLabelColor = if(viewModel.emailValid.value) gray else errorColor
             )
         )
-        errorFeild(emailIncorrectMessage)
+        errorFeild2(emailIncorrectMessage,viewModel.emailValid.value)
         OutlinedTextField(
             value = passwordState.value,
             onValueChange = { passwordState.value = it },
@@ -134,10 +196,11 @@ fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
                 Text(text = "Enter Password", fontFamily = customFontFamily)
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = primaryColor,
-                focusedLabelColor = primaryColor,
-                cursorColor = primaryColor,
-                unfocusedBorderColor = gray
+                focusedBorderColor = if(viewModel.passwordValid.value) primaryColor else errorColor,
+                focusedLabelColor = if (viewModel.passwordValid.value) primaryColor else errorColor,
+                cursorColor = if (viewModel.passwordValid.value) primaryColor else errorColor,
+                unfocusedBorderColor = if (viewModel.passwordValid.value) gray else errorColor,
+                unfocusedLabelColor = if (viewModel.passwordValid.value) gray else errorColor
             ),
             trailingIcon = {
                 val image = if (passwordVisibility)
@@ -149,21 +212,42 @@ fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
                 }
             }
         )
-        errorFeild(passwordIncorrectMessage)
+        errorFeild(passwordIncorrectMessage,viewModel.passwordValid.value)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(top = 6.dp, end = 24.dp)
-                .clickable {
-
-                },
+                ,
             horizontalArrangement = Arrangement.End
         ) {
-            Text(text = "Forgot Password?", fontSize = 14.sp, fontFamily = customFontFamily)
+            Text(text = "Forgot Password?",
+                fontSize = 14.sp,
+                fontFamily = customFontFamily,
+                modifier = Modifier.clickable {  })
         }
         Button(
-            onClick = { /* Handle button click */ },
+            onClick = {
+                if(viewModel.loginCheck(emailState.value.text.trim(),passwordState.value.text)
+                    && isValidEmail(emailState.value.text)
+                    && isValidPassword(passwordState.value.text)
+                    )
+                {
+                   viewModel.loginUser(emailState.value.text,passwordState.value.text)
+//                    if(viewModel.userEmailVerified.value){
+//                        navigateToScreen(
+//                            navController = navController,
+//                            route = Screen.DashboardScreen.route
+//                        )
+//                    }
+//                    else{
+//                        navigateToScreen(
+//                            navController = navController,
+//                            route = Screen.CheckYourMail.route
+//                        )
+//                    }
+                }
+            },
             modifier = Modifier
                 .padding(top = 16.dp, start = 24.dp, end = 24.dp)
                 .height(54.dp)
@@ -196,10 +280,14 @@ fun LoginScreen(navController: NavController, viewModel: LCViewModel) {
         }
         OutlinedButton(
             onClick = {
-                navigateToScreen(
-                    navController = navController,
-                    route = Screen.LoginScreen.route
-                )
+                val gso = GoogleSignInOptions
+                    .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(token)
+                    .requestEmail()
+                    .build()
+                val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                launcher.launch(googleSignInClient.signInIntent)
+
             },
             modifier = Modifier
                 .padding(top = 32.dp, start = 24.dp, end = 24.dp)

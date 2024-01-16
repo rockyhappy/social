@@ -1,8 +1,11 @@
-package com.devrachit.insta.screens
+package com.devrachit.insta.ui.SignUpScreen
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +21,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -46,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.devrachit.insta.Constants.Constants
+import com.devrachit.insta.Constants.Constants.Companion.web_Client_Id
 import com.devrachit.insta.R
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
@@ -55,7 +59,15 @@ import com.devrachit.insta.util.ButtonImage
 import com.devrachit.insta.util.CommonDivider
 import com.devrachit.insta.util.errorFeild2
 import com.devrachit.insta.util.navigateToScreen
-import com.devrachit.insta.viewModel.LCViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+//import androidx.compose.runtime.collectAsStateWithLifecycle
+import androidx.compose.runtime.saveable.rememberSaveable
+
 
 
 @Composable
@@ -72,6 +84,8 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
     var passwordVisibility by remember {
         mutableStateOf(false)
     }
+    val loading by  viewModel.inProgress.collectAsStateWithLifecycle()
+
     val visualTransformation: VisualTransformation =
         if (passwordVisibility) VisualTransformation.None
         else PasswordVisualTransformation()
@@ -82,36 +96,72 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
     var userNameIncorrectMessage = viewModel.userNameErrorMessage.value
 
     var onSignupClick: () -> Unit = {
-        if (viewModel.validateEmail(emailState.value.text.trim()) &&
-            viewModel.validatePassword(passwordState.value.text)
+        var check=false
+        if(viewModel.validateEmail(emailState.value.text.trim()))
+        {
+            check=true
+        }
 
-        ) {
+        if(viewModel.validatePassword(passwordState.value.text))
+        {
+            check=true
+        }
+        if(viewModel.validatePreUserNameBeforeSignup(userNameState.value.text.trim()))
+        {
+            check=true
+        }
+        if(check)
+        {
             viewModel.userNameValidation(
                 userNameState.value.text.trim(),
                 emailState.value.text.trim(),
                 passwordState.value.text
-                )
+            )
         }
-//        val validationResult = viewModel.userNameValidationResult.value
-//
-//        if (validationResult != null) {
-//            if (validationResult == true) {
-//                viewModel.signUp(
-//                    emailState.value.text.trim(),
-//                    passwordState.value.text,
-//                    userNameState.value.text.trim()
-//                )
-//            } else {
-//                // Handle the case where the username is not valid
-//            }
-//        }
     }
 
-    if(viewModel.signupComplete.value){
+    if (viewModel.signupComplete.value) {
         navigateToScreen(
             navController = navController,
-            route = Screen.DashboardScreen.route
+            route = Screen.CheckYourMail.route
         )
+    }
+
+
+    val context = LocalContext.current
+    val token = web_Client_Id
+    val launcherNav = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        navController.navigate(Screen.DashboardScreen.route)
+    }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) {
+        val task =
+            try {
+                val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                    .getResult(ApiException::class.java)
+                val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+                FirebaseAuth.getInstance().signInWithCredential(credential)
+                    .addOnCompleteListener {task->
+                        if (task.isSuccessful) {
+
+                            val user = FirebaseAuth.getInstance().currentUser
+                            user?.let {
+                                val uid = it.uid.toString()
+                                val email = it.email.toString()
+                                val username = it.displayName.toString()
+                                viewModel.createUser(email,username,uid)
+                            }
+
+                            navigateToScreen(navController,Screen.DashboardScreen.route)
+                        }
+                    }
+            }
+            catch (e: ApiException) {
+                Log.w("TAG", "GoogleSign in Failed", e)
+            }
     }
 
     Column(
@@ -266,10 +316,15 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
 
         OutlinedButton(
             onClick = {
-                navigateToScreen(
-                    navController = navController,
-                    route = Screen.LoginScreen.route
-                )
+
+                    val gso = GoogleSignInOptions
+                        .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(token)
+                        .requestEmail()
+                        .build()
+                    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                    launcher.launch(googleSignInClient.signInIntent)
+
             },
             modifier = Modifier
                 .padding(top = 32.dp)
@@ -280,7 +335,8 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
-            )
+            ),
+            enabled = !viewModel.loading.value
 
         ) {
             ButtonImage(painter = painterResource(id = R.drawable.google))
@@ -295,7 +351,7 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
             onClick = {
                 navigateToScreen(
                     navController = navController,
-                    route = Screen.LoginScreen.route
+                    route = Screen.CheckYourMail.route
                 )
             },
             modifier = Modifier
@@ -307,7 +363,8 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
-            )
+            ),
+            enabled = !viewModel.loading.value
 
         ) {
             ButtonImage(painter = painterResource(id = R.drawable.facebook))
@@ -320,13 +377,24 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
         }
         Row(
             modifier = Modifier
-                .padding(42.dp)
+                .padding(top = 42.dp, bottom = 24.dp)
         ) {
-            Text(text = "Don't have an Account? ", fontFamily = Constants.customFontFamily)
             Text(
-                text = "SignUp",
+                text = "Already Have an Account? ",
+                fontFamily = Constants.customFontFamily,
+                fontSize = 16.sp
+            )
+            Text(
+                text = "SignIn",
                 fontWeight = FontWeight.Bold,
-                fontFamily = Constants.customFontFamily
+                fontFamily = Constants.customFontFamily,
+                fontSize = 16.sp,
+                modifier = Modifier.clickable {
+                    navigateToScreen(
+                        navController = navController,
+                        route = Screen.LoginScreen.route
+                    )
+                }
             )
         }
     }
