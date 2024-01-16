@@ -78,4 +78,10 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun updateUser(email:String,userName:String,uid:String)
+    {
+        sharedViewModel.email=email
+        sharedViewModel.userName=userName
+        sharedViewModel.uid=uid
+    }
 }

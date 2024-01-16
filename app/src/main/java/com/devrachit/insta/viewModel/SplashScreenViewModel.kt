@@ -9,6 +9,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,18 +22,19 @@ class SplashScreenViewModel @Inject constructor(
 
     val load= mutableStateOf(false)
         suspend fun checkUserLoggedIn(): Boolean {
-//            viewModelScope.launch {
+            viewModelScope.launch {
                 if (auth.currentUser != null) {
-                    auth.currentUser?.reload()
+                    val result=auth.currentUser?.reload()?.isComplete
+                    if(result==true)
                     if (auth.currentUser?.isEmailVerified == true) {
                         sharedViewModel.email = auth.currentUser?.email.toString()
                         sharedViewModel.userName = db.collection("users").document(auth.currentUser?.uid!!).get().result?.get("userName").toString()
-                        //sharedViewModel.password = db.collection("users").document(auth.currentUser?.uid!!).get().result?.get("password").toString()
+//                        sharedViewModel.password = db.collection("users").document(auth.currentUser?.uid!!).get().result?.get("password").toString()
                         sharedViewModel.emailVerified = db.collection("users").document(auth.currentUser?.uid!!).get().result?.get("emailVerified").toString().toBoolean()
                         sharedViewModel.uid = auth.currentUser?.uid.toString()
 
                     }
-//                }
+                }
                 load.value=true
             }
             return auth.currentUser != null

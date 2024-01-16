@@ -1,5 +1,8 @@
 package com.devrachit.insta.screens
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -48,6 +52,7 @@ import com.devrachit.insta.ui.theme.primaryColor
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
@@ -61,6 +66,11 @@ import com.devrachit.insta.util.isValidPassword
 import com.devrachit.insta.util.navigateToScreen
 import com.devrachit.insta.viewModel.LCViewModel
 import com.devrachit.insta.viewModel.LoginViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 
 @Composable
@@ -97,6 +107,41 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                 )
             }
         }
+    }
+    val context = LocalContext.current
+    val token = Constants.web_Client_Id
+    val launcherNav = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        navController.navigate(Screen.DashboardScreen.route)
+    }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult(),
+    ) {
+        val task =
+            try {
+                val account = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                    .getResult(ApiException::class.java)
+                val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+                FirebaseAuth.getInstance().signInWithCredential(credential)
+                    .addOnCompleteListener {task->
+                        if (task.isSuccessful) {
+
+                            val user = FirebaseAuth.getInstance().currentUser
+                            user?.let {
+                                val uid = it.uid.toString()
+                                val email = it.email.toString()
+                                val username = it.displayName.toString()
+                                viewModel.updateUser(email, username,uid)
+                            }
+
+                            navigateToScreen(navController,Screen.DashboardScreen.route)
+                        }
+                    }
+            }
+            catch (e: ApiException) {
+                Log.w("TAG", "GoogleSign in Failed", e)
+            }
     }
 
 
@@ -240,10 +285,14 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
         }
         OutlinedButton(
             onClick = {
-                navigateToScreen(
-                    navController = navController,
-                    route = Screen.LoginScreen.route
-                )
+                val gso = GoogleSignInOptions
+                    .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(token)
+                    .requestEmail()
+                    .build()
+                val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                launcher.launch(googleSignInClient.signInIntent)
+
             },
             modifier = Modifier
                 .padding(top = 32.dp, start = 24.dp, end = 24.dp)

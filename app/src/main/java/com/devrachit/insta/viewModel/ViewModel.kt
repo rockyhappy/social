@@ -23,9 +23,7 @@ class LCViewModel @Inject constructor(
     val auth: FirebaseAuth,
     val db: FirebaseFirestore,
     val storage: FirebaseStorage,
-    val sharedViewModel: SharedViewModel,
-//    val oneTapClient: SignInClient,
-//    val context: Context,
+    val sharedViewModel: SharedViewModel
 ) : ViewModel() {
 
 
@@ -213,7 +211,4 @@ class LCViewModel @Inject constructor(
             }
 
     }
-
-
-
 }
