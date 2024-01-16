@@ -64,6 +64,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+//import androidx.compose.runtime.collectAsStateWithLifecycle
+import androidx.compose.runtime.saveable.rememberSaveable
+
 
 
 @Composable
@@ -80,6 +84,8 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
     var passwordVisibility by remember {
         mutableStateOf(false)
     }
+    val loading by  viewModel.inProgress.collectAsStateWithLifecycle()
+
     val visualTransformation: VisualTransformation =
         if (passwordVisibility) VisualTransformation.None
         else PasswordVisualTransformation()
@@ -90,10 +96,22 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
     var userNameIncorrectMessage = viewModel.userNameErrorMessage.value
 
     var onSignupClick: () -> Unit = {
-        if (viewModel.validateEmail(emailState.value.text.trim()) &&
-            viewModel.validatePassword(passwordState.value.text)
+        var check=false
+        if(viewModel.validateEmail(emailState.value.text.trim()))
+        {
+            check=true
+        }
 
-        ) {
+        if(viewModel.validatePassword(passwordState.value.text))
+        {
+            check=true
+        }
+        if(viewModel.validatePreUserNameBeforeSignup(userNameState.value.text.trim()))
+        {
+            check=true
+        }
+        if(check)
+        {
             viewModel.userNameValidation(
                 userNameState.value.text.trim(),
                 emailState.value.text.trim(),

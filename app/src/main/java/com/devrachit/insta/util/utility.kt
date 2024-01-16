@@ -227,8 +227,7 @@ fun errorFeild(message:String="", showMessage: Boolean){
 @Composable
 fun errorFeild2(message:String="" , showMessage: Boolean){
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = if(!showMessage)Modifier.fillMaxSize()else Modifier.size(8.dp),
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.Bottom
     ) {

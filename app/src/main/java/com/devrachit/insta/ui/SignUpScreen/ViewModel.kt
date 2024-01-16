@@ -1,7 +1,13 @@
 package com.devrachit.insta.ui.SignUpScreen
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.LiveData
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +19,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -39,6 +47,8 @@ class LCViewModel @Inject constructor(
 
     private val _userNameValidationResult = MutableLiveData<Boolean>()
 
+    private val _inProgress = MutableStateFlow(false)
+    val inProgress= _inProgress.asStateFlow()
     fun validateEmail(email: String): Boolean {
         emailData = email.trim()
         loading.value = true
@@ -50,6 +60,28 @@ class LCViewModel @Inject constructor(
         emailValid.value = false
         loading.value = false
         return false
+    }
+
+    fun validatePreUserNameBeforeSignup(userName:String) :Boolean
+    {
+        _inProgress.value=true
+        sharedViewModel.userName=userName
+        if(userName.length<6 || userName.isEmpty())
+        {
+            userNameErrorMessage.value="Username must be at least 6 characters"
+            userNameValid.value=false
+            _inProgress.value=false
+            return false
+        }
+        if(userName.contains(" "))
+        {
+            userNameErrorMessage.value="Username must not contain spaces"
+            userNameValid.value=false
+            _inProgress.value=false
+            return false
+        }
+        _inProgress.value=false
+        return true
     }
 
     fun userNameValidation(userName: String, email: String, password: String) {
