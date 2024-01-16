@@ -1,4 +1,4 @@
-package com.devrachit.insta.screens
+package com.devrachit.insta.ui.SignUpScreen
 
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,7 +31,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,14 +41,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.web_Client_Id
@@ -62,7 +59,6 @@ import com.devrachit.insta.util.ButtonImage
 import com.devrachit.insta.util.CommonDivider
 import com.devrachit.insta.util.errorFeild2
 import com.devrachit.insta.util.navigateToScreen
-import com.devrachit.insta.viewModel.LCViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException

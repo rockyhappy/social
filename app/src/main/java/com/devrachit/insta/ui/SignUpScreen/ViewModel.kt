@@ -1,4 +1,4 @@
-package com.devrachit.insta.viewModel
+package com.devrachit.insta.ui.SignUpScreen
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -37,10 +37,7 @@ class LCViewModel @Inject constructor(
     var emailData = ""
     val userEmailVerified= mutableStateOf(false)
 
-//    private val googleAuthUiClient = GoogleAuthUiClient(context, oneTapClient)
-
     private val _userNameValidationResult = MutableLiveData<Boolean>()
-    val userNameValidationResult: LiveData<Boolean> get() = _userNameValidationResult
 
     fun validateEmail(email: String): Boolean {
         emailData = email.trim()

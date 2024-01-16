@@ -7,12 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,9 +18,9 @@ import com.devrachit.insta.ui.theme.InstaTheme
 import com.devrachit.insta.screens.ChoiceScreen
 import com.devrachit.insta.screens.DashboardScreen
 import com.devrachit.insta.screens.LoginScreen
-import com.devrachit.insta.screens.SignupScreen
+import com.devrachit.insta.ui.SignUpScreen.SignupScreen
 import com.devrachit.insta.screens.SplashScreen
-import com.devrachit.insta.viewModel.LCViewModel
+import com.devrachit.insta.ui.SignUpScreen.LCViewModel
 import com.devrachit.insta.viewModel.LoginViewModel
 import com.devrachit.insta.viewModel.SplashScreenViewModel
 import com.devrachit.insta.viewModel.VerifyEmailViewModel

@@ -2,7 +2,6 @@ package com.devrachit.insta.screens
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,30 +25,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.devrachit.insta.R
 import com.devrachit.insta.ui.theme.primaryColor
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.*
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.font.FontWeight
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.gray
 import com.devrachit.insta.util.SelfRunningImageCarousel
-import com.devrachit.insta.util.navigateToScreen
-import com.devrachit.insta.viewModel.LCViewModel
-import kotlinx.coroutines.launch
+import com.devrachit.insta.ui.SignUpScreen.LCViewModel
 
 @Composable
 fun ChoiceScreen(navController: NavController, viewModel: LCViewModel) {

@@ -2,7 +2,6 @@ package com.devrachit.insta.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -39,7 +38,6 @@ import com.devrachit.insta.ui.theme.lightGray
 import com.devrachit.insta.ui.theme.primaryColor
 import com.devrachit.insta.ui.theme.successColor
 import com.devrachit.insta.util.navigateToScreen
-import com.devrachit.insta.viewModel.LCViewModel
 import com.devrachit.insta.viewModel.VerifyEmailViewModel
 
 @Composable
