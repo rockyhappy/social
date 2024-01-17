@@ -275,10 +275,10 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
                 containerColor = primaryColor,
                 contentColor = Color.Black
             ),
-            enabled = !viewModel.loading.value
+            enabled = (!viewModel.loading.value || !loading)
 
         ) {
-            if (viewModel.loading.value) {
+            if (viewModel.loading.value || loading ) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -336,7 +336,7 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
             ),
-            enabled = !viewModel.loading.value
+            enabled = (!viewModel.loading.value || !loading)
 
         ) {
             ButtonImage(painter = painterResource(id = R.drawable.google))
@@ -364,7 +364,7 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
             ),
-            enabled = !viewModel.loading.value
+            enabled = (!viewModel.loading.value || !loading)
 
         ) {
             ButtonImage(painter = painterResource(id = R.drawable.facebook))

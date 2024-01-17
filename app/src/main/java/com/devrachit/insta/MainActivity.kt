@@ -15,7 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.devrachit.insta.screens.CheckYourMail
 import com.devrachit.insta.ui.theme.InstaTheme
-import com.devrachit.insta.screens.ChoiceScreen
+import com.devrachit.insta.ui.ChoiceScreen.ChoiceScreen
 import com.devrachit.insta.screens.DashboardScreen
 import com.devrachit.insta.screens.LoginScreen
 import com.devrachit.insta.ui.SignUpScreen.SignupScreen
@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
                 SignupScreen(navController = navController,viewModel = vm)
             }
             composable(com.devrachit.insta.Screen.ChoiceScreen.route){
-                ChoiceScreen(navController = navController, viewModel = vm)
+                ChoiceScreen(navController = navController)
             }
             composable(com.devrachit.insta.Screen.DashboardScreen.route){
                 DashboardScreen(navController = navController,viewModel = vm)
