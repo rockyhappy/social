@@ -11,7 +11,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.USER_NODE
+import com.devrachit.insta.Constants.Constants.Companion.email
 import com.devrachit.insta.Models.SharedViewModel
 import com.devrachit.insta.util.isValidEmail
 import com.devrachit.insta.util.isValidPassword
@@ -35,6 +37,7 @@ class LCViewModel @Inject constructor(
 ) : ViewModel() {
 
 
+    val instance=SharedViewModel()
     val emailValid = mutableStateOf(true)
     val userNameValid = mutableStateOf(true)
     val passwordValid = mutableStateOf(true)
@@ -49,19 +52,25 @@ class LCViewModel @Inject constructor(
 
     private val _inProgress = MutableStateFlow(false)
     val inProgress= _inProgress.asStateFlow()
+
+    //This function is used to validate the email
     fun validateEmail(email: String): Boolean {
         emailData = email.trim()
+        _inProgress.value=true
         loading.value = true
         if (isValidEmail(email)) {
             emailValid.value = true
+            _inProgress.value=false
             return true
         }
 
         emailValid.value = false
         loading.value = false
+        _inProgress.value=false
         return false
     }
 
+    //This function is used to validate the username post to the check if the userName is already taken
     fun validatePreUserNameBeforeSignup(userName:String) :Boolean
     {
         _inProgress.value=true
@@ -86,20 +95,23 @@ class LCViewModel @Inject constructor(
 
     fun userNameValidation(userName: String, email: String, password: String) {
         var ret = false
+        _inProgress.value=true
         viewModelScope.launch {
             ret = validateUserName(userName, email, password)
             _userNameValidationResult.value = ret
+            _inProgress.value=false
         }
 
     }
 
     suspend fun validateUserName(userName: String, email: String, password: String): Boolean {
-        if (userName.isEmpty() || userName.length < 4) {
+        _inProgress.value=true
+        if (userName.isEmpty() || userName.length < 6) {
             userNameValid.value = false
             userNameErrorMessage.value = "Username must be at least 4 characters"
+            _inProgress.value=false
             return false
         }
-
         val taken = userNameAlreadyTaken(userName, email, password) ?: false
         println("taken: $taken")
 
@@ -108,22 +120,29 @@ class LCViewModel @Inject constructor(
             userNameErrorMessage.value = "Username already taken"
         }
         userNameValid.value = !taken
+        _inProgress.value=false
         return !taken
     }
 
+    //This function is used to validate the password
     fun validatePassword(password: String): Boolean {
         loading.value = true
+        _inProgress.value=true
         if (isValidPassword(password)) {
             passwordValid.value = true
+            loading.value = false
+            _inProgress.value=false
             return true
         }
         passwordValid.value = false
+        _inProgress.value=false
         loading.value = false
         return false
     }
 
     fun signUp(email: String, password: String, userName: String) {
         loading.value = true
+        _inProgress.value=true
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {
                 if (it.isSuccessful) {
@@ -149,20 +168,26 @@ class LCViewModel @Inject constructor(
                             if (task.isSuccessful) {
                                 println("User Created")
                             }
+                            _inProgress.value=false
                         }
 
 
                     sharedViewModel.email = email
                     sharedViewModel.userName = userName
                     sharedViewModel.password = password
+                    Constants.email=email
+                    sharedViewModel.email2.value=email
                     loading.value = false
                     signupComplete.value = true
                 }
                 loading.value = false
+                _inProgress.value=false
             }
     }
 
     suspend fun userNameAlreadyTaken(userName: String, email: String, password: String): Boolean? {
+        loading.value = true
+        _inProgress.value=true
         return suspendCoroutine { continuation ->
             db.collection(USER_NODE).get().addOnSuccessListener { querySnapshot ->
                 var taken = false
@@ -180,7 +205,9 @@ class LCViewModel @Inject constructor(
                 println("taken: $taken")
                 loading.value = false
                 continuation.resume(taken)
+                _inProgress.value=false
             }.addOnFailureListener {
+                _inProgress.value=false
                 continuation.resume(false)
             }
         }

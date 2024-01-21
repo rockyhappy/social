@@ -1,4 +1,4 @@
-package com.devrachit.insta.screens
+package com.devrachit.insta.ui.ChoiceScreen
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -29,6 +29,8 @@ import androidx.navigation.NavController
 import com.devrachit.insta.R
 import com.devrachit.insta.ui.theme.primaryColor
 import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.gray
@@ -36,7 +38,8 @@ import com.devrachit.insta.util.SelfRunningImageCarousel
 import com.devrachit.insta.ui.SignUpScreen.LCViewModel
 
 @Composable
-fun ChoiceScreen(navController: NavController, viewModel: LCViewModel) {
+fun ChoiceScreen(navController: NavController,) {
+    val viewModel:ChoiceScreenViewModel= hiltViewModel<ChoiceScreenViewModel>()
     val images = listOf(
         painterResource(id = R.drawable.image1),
         painterResource(id = R.drawable.image2),

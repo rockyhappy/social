@@ -92,30 +92,23 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
 
 
     var passwordIncorrectMessage = "Requirements don’t match"
-    var emailIncorrectMessage = "It does not look like an email"
+    var emailIncorrectMessage = "Uh-oh! That’s not a vaild email"
     var userNameIncorrectMessage = viewModel.userNameErrorMessage.value
 
     var onSignupClick: () -> Unit = {
-        var check=false
-        if(viewModel.validateEmail(emailState.value.text.trim()))
-        {
-            check=true
-        }
-
-        if(viewModel.validatePassword(passwordState.value.text))
-        {
-            check=true
-        }
-        if(viewModel.validatePreUserNameBeforeSignup(userNameState.value.text.trim()))
-        {
-            check=true
-        }
+        var check=true
+        if(!viewModel.validateEmail(emailState.value.text.trim()))
+            check=false
+        if(!viewModel.validatePassword(passwordState.value.text.trim()))
+            check=false
+        if(!viewModel.validatePreUserNameBeforeSignup(userNameState.value.text.trim()))
+            check=false
         if(check)
         {
             viewModel.userNameValidation(
                 userNameState.value.text.trim(),
                 emailState.value.text.trim(),
-                passwordState.value.text
+                passwordState.value.text.trim()
             )
         }
     }
@@ -154,8 +147,13 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
                                 val username = it.displayName.toString()
                                 viewModel.createUser(email,username,uid)
                             }
-
-                            navigateToScreen(navController,Screen.DashboardScreen.route)
+                            viewModel.signupComplete.value=false
+                            navController.navigate(Screen.DashboardScreen.route) {
+                                popUpTo(0) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
                         }
                     }
             }
@@ -275,10 +273,10 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
                 containerColor = primaryColor,
                 contentColor = Color.Black
             ),
-            enabled = !viewModel.loading.value
+            enabled = (!viewModel.loading.value || !loading)
 
         ) {
-            if (viewModel.loading.value) {
+            if (viewModel.loading.value || loading ) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -336,7 +334,7 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
             ),
-            enabled = !viewModel.loading.value
+            enabled = (!viewModel.loading.value || !loading)
 
         ) {
             ButtonImage(painter = painterResource(id = R.drawable.google))
@@ -364,7 +362,7 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
                 containerColor = Color.Transparent,
                 contentColor = Color.Transparent
             ),
-            enabled = !viewModel.loading.value
+            enabled = (!viewModel.loading.value || !loading)
 
         ) {
             ButtonImage(painter = painterResource(id = R.drawable.facebook))
