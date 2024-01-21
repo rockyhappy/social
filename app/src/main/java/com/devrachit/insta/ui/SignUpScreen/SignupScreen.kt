@@ -147,8 +147,13 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
                                 val username = it.displayName.toString()
                                 viewModel.createUser(email,username,uid)
                             }
-
-                            navigateToScreen(navController,Screen.DashboardScreen.route)
+                            viewModel.signupComplete.value=false
+                            navController.navigate(Screen.DashboardScreen.route) {
+                                popUpTo(0) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
                         }
                     }
             }

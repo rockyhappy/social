@@ -154,7 +154,7 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
 
 @Composable
 fun CountdownTimerWithReset(viewModel: VerifyEmailViewModel) {
-    var timeLeft by remember { mutableStateOf(10) }
+    var timeLeft by remember { mutableStateOf(60) }
     var isPaused by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = timeLeft, key2 = isPaused) {
@@ -165,7 +165,7 @@ fun CountdownTimerWithReset(viewModel: VerifyEmailViewModel) {
     }
 
     fun resetTimer() {
-        timeLeft = 10
+        timeLeft = 60
         isPaused = false
     }
 

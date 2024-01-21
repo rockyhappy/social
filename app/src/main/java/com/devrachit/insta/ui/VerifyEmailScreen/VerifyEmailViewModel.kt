@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.tasks.await
 
 
 @HiltViewModel
@@ -35,7 +36,7 @@ class VerifyEmailViewModel @Inject constructor(
         fun sendEmailVerification() {
             viewModelScope.launch {
                 _inProgress.value=true
-                auth.currentUser?.sendEmailVerification()
+                auth.currentUser?.sendEmailVerification()?.await()
                 _inProgress.value=false
             }
         }
