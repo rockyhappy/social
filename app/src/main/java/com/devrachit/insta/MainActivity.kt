@@ -13,7 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.devrachit.insta.screens.CheckYourMail
+import com.devrachit.insta.ui.VerifyEmailScreen.CheckYourMail
 import com.devrachit.insta.ui.theme.InstaTheme
 import com.devrachit.insta.ui.ChoiceScreen.ChoiceScreen
 import com.devrachit.insta.screens.DashboardScreen
@@ -23,7 +23,7 @@ import com.devrachit.insta.screens.SplashScreen
 import com.devrachit.insta.ui.SignUpScreen.LCViewModel
 import com.devrachit.insta.viewModel.LoginViewModel
 import com.devrachit.insta.viewModel.SplashScreenViewModel
-import com.devrachit.insta.viewModel.VerifyEmailViewModel
+import com.devrachit.insta.ui.VerifyEmailScreen.VerifyEmailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 sealed class Screen(val route:String)

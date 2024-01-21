@@ -1,4 +1,4 @@
-package com.devrachit.insta.screens
+package com.devrachit.insta.ui.VerifyEmailScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -21,16 +21,26 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.devrachit.insta.Constants.Constants
+import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
+import com.devrachit.insta.Constants.Constants.Companion.email
 import com.devrachit.insta.R
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
@@ -38,7 +48,8 @@ import com.devrachit.insta.ui.theme.lightGray
 import com.devrachit.insta.ui.theme.primaryColor
 import com.devrachit.insta.ui.theme.successColor
 import com.devrachit.insta.util.navigateToScreen
-import com.devrachit.insta.viewModel.VerifyEmailViewModel
+import com.devrachit.insta.ui.VerifyEmailScreen.VerifyEmailViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel) {
@@ -46,8 +57,7 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
     if (viewModel.userEmailVerified.value) {
         navigateToScreen(navController = navController, route = Screen.DashboardScreen.route)
     }
-
-
+    val loading by viewModel.inProgress.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -75,7 +85,7 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
             fontFamily = Constants.customFontFamily
         )
         Text(
-            text = viewModel.sharedViewModel.email,
+            text = email,
             color = lightGray,
             fontSize = 24.sp,
             modifier = Modifier
@@ -95,6 +105,7 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
             fontFamily = Constants.customFontFamily,
             textAlign = TextAlign.Center
         )
+        CountdownTimerWithReset(viewModel =viewModel)
         Text(
             text = if (!viewModel.userEmailVerified.value) "Email Not Verified" else "Email Verified",
             color = if (!viewModel.userEmailVerified.value) errorColor else successColor,
@@ -106,21 +117,9 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
             fontFamily = Constants.customFontFamily
         )
         Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "Resend",
-            color = Color.White,
-            fontSize = 16.sp,
-            modifier = Modifier
-                .padding(bottom = 24.dp)
-                .wrapContentHeight()
-                .wrapContentWidth()
-                .clickable {
-                    viewModel.sendEmailVerification()
-                },
-            fontFamily = Constants.customFontFamily,
-            textAlign = TextAlign.Center)
         Button(
             onClick = {
+                println(viewModel.sharedViewModel.email.toString())
                 viewModel.checkEmailVerification()
             },
             modifier = Modifier
@@ -132,9 +131,9 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
                 containerColor = primaryColor,
                 contentColor = Color.Black
             ),
-            enabled = !viewModel.loading.value
+            enabled = !loading
         ) {
-            if (viewModel.loading.value) {
+            if (loading) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .fillMaxHeight()
@@ -143,7 +142,7 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
                 )
             } else {
                 Text(
-                    "Refresh",
+                    "Proceed",
                     fontFamily = Constants.customFontFamily,
                     fontWeight = FontWeight.Bold
                 )
@@ -151,4 +150,52 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
         }
     }
 
+}
+
+@Composable
+fun CountdownTimerWithReset(viewModel: VerifyEmailViewModel) {
+    var timeLeft by remember { mutableStateOf(10) }
+    var isPaused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = timeLeft, key2 = isPaused) {
+        while (timeLeft > 0 && !isPaused) {
+            delay(1000L)
+            timeLeft--
+        }
+    }
+
+    fun resetTimer() {
+        timeLeft = 10
+        isPaused = false
+    }
+
+    Column {
+        if (timeLeft == 0) {
+            Text(
+                text = "Resend Mail" ,
+                fontFamily= customFontFamily,
+                fontWeight= FontWeight.Bold,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(vertical = 28.dp)
+                    .wrapContentHeight()
+                    .wrapContentWidth()
+                    .clickable {
+                        resetTimer()
+                        viewModel.sendEmailVerification()
+                    },
+            )
+        } else {
+            Text(text = "Resend mail in : $timeLeft Seconds",
+                fontFamily= customFontFamily,
+                fontWeight= FontWeight.Bold,
+                fontSize = 16.sp,
+                modifier = Modifier
+                    .padding(vertical = 28.dp)
+                    .wrapContentHeight()
+                    .wrapContentWidth()
+            )
+        }
+
+    }
 }

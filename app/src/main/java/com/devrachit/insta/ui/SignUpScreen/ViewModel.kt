@@ -11,7 +11,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.USER_NODE
+import com.devrachit.insta.Constants.Constants.Companion.email
 import com.devrachit.insta.Models.SharedViewModel
 import com.devrachit.insta.util.isValidEmail
 import com.devrachit.insta.util.isValidPassword
@@ -35,6 +37,7 @@ class LCViewModel @Inject constructor(
 ) : ViewModel() {
 
 
+    val instance=SharedViewModel()
     val emailValid = mutableStateOf(true)
     val userNameValid = mutableStateOf(true)
     val passwordValid = mutableStateOf(true)
@@ -172,6 +175,8 @@ class LCViewModel @Inject constructor(
                     sharedViewModel.email = email
                     sharedViewModel.userName = userName
                     sharedViewModel.password = password
+                    Constants.email=email
+                    sharedViewModel.email2.value=email
                     loading.value = false
                     signupComplete.value = true
                 }
