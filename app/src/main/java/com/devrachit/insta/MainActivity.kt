@@ -16,13 +16,13 @@ import androidx.navigation.compose.rememberNavController
 import com.devrachit.insta.ui.VerifyEmailScreen.CheckYourMail
 import com.devrachit.insta.ui.theme.InstaTheme
 import com.devrachit.insta.ui.ChoiceScreen.ChoiceScreen
-import com.devrachit.insta.screens.DashboardScreen
-import com.devrachit.insta.screens.LoginScreen
+import com.devrachit.insta.ui.DashBoardScreens.DashboardScreen
+import com.devrachit.insta.ui.LoginScreen.LoginScreen
 import com.devrachit.insta.ui.SignUpScreen.SignupScreen
-import com.devrachit.insta.screens.SplashScreen
+import com.devrachit.insta.ui.SplashScreen.SplashScreen
 import com.devrachit.insta.ui.SignUpScreen.LCViewModel
-import com.devrachit.insta.viewModel.LoginViewModel
-import com.devrachit.insta.viewModel.SplashScreenViewModel
+import com.devrachit.insta.ui.LoginScreen.LoginViewModel
+import com.devrachit.insta.ui.SplashScreen.SplashScreenViewModel
 import com.devrachit.insta.ui.VerifyEmailScreen.VerifyEmailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
         val LoginViewModel= hiltViewModel<LoginViewModel>()
         val VerifyEmailViewModel= hiltViewModel<VerifyEmailViewModel>()
         val splashScreenViewModel= hiltViewModel<SplashScreenViewModel>()
-        NavHost(navController = navController, startDestination = com.devrachit.insta.Screen.ChoiceScreen.route){
+        NavHost(navController = navController, startDestination = com.devrachit.insta.Screen.SplashScreen.route){
             composable(com.devrachit.insta.Screen.SplashScreen.route){
                 SplashScreen(navController = navController, viewModel = splashScreenViewModel)
             }

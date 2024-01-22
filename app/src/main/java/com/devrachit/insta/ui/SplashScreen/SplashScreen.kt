@@ -1,4 +1,4 @@
-package com.devrachit.insta.screens
+package com.devrachit.insta.ui.SplashScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -13,25 +13,30 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.R
 import com.devrachit.insta.Screen
 import com.devrachit.insta.util.navigateToScreen
-import com.devrachit.insta.viewModel.SplashScreenViewModel
+import com.devrachit.insta.ui.SplashScreen.SplashScreenViewModel
 
 
 @Composable
 fun SplashScreen(navController: NavController, viewModel: SplashScreenViewModel) {
-
-    LaunchedEffect(viewModel.load.value){
-        if(viewModel.checkUserLoggedIn() && viewModel.sharedViewModel.emailVerified){
+    val loading by  viewModel.inProgress.collectAsStateWithLifecycle()
+    val load by viewModel.load.collectAsStateWithLifecycle()
+    LaunchedEffect(load){
+        if(viewModel.checkUserLoggedIn()
+//            && viewModel.sharedViewModel.emailVerified
+            ){
 
             navigateToScreen(navController = navController, route = Screen.DashboardScreen.route)
         }

@@ -1,4 +1,4 @@
-package com.devrachit.insta.viewModel
+package com.devrachit.insta.ui.LoginScreen
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -8,10 +8,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import kotlin.time.times
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -26,6 +27,10 @@ class LoginViewModel @Inject constructor(
     val loading = mutableStateOf(false)
     val loginComplete = mutableStateOf(false)
     val userEmailVerified= mutableStateOf(false)
+
+    private val _inProgress = MutableStateFlow(false)
+    val inProgress= _inProgress.asStateFlow()
+
     fun loginCheck(email: String, password: String): Boolean {
         if (email.isEmpty()) {
             emailValid.value = false
@@ -52,7 +57,7 @@ class LoginViewModel @Inject constructor(
                     sharedViewModel.emailVerified = db.collection("users").document(auth.currentUser?.uid!!).get().await().get("emailVerified").toString().toBoolean()
                     println("Email Verified: ${auth.currentUser?.isEmailVerified}")
                     if (
-//                        auth.currentUser?.isEmailVerified == false ||
+                        auth.currentUser?.isEmailVerified == false ||
                         !sharedViewModel.emailVerified
                         )
                     {
@@ -83,5 +88,18 @@ class LoginViewModel @Inject constructor(
         sharedViewModel.email=email
         sharedViewModel.userName=userName
         sharedViewModel.uid=uid
+    }
+    fun sendPasswordResetEmail(email: String) {
+        _inProgress.value = true
+        viewModelScope.launch {
+            try {
+                auth.sendPasswordResetEmail(email).await()
+            } catch (e: Exception) {
+                println("Password reset failed. Exception: ${e.message}")
+            }
+            finally {
+                _inProgress.value = false
+            }
+        }
     }
 }
