@@ -51,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
+import com.devrachit.insta.Constants.Constants.Companion.email
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
 import com.devrachit.insta.ui.theme.gray
@@ -185,7 +186,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                 unfocusedLabelColor = if (viewModel.emailValid.value) gray else errorColor
             )
         )
-        errorFeild2(emailIncorrectMessage, viewModel.emailValid.value)
+        errorFeild(emailIncorrectMessage, viewModel.emailValid.value)
         OutlinedTextField(
             value = passwordState.value,
             onValueChange = { passwordState.value = it },
@@ -226,7 +227,19 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                 fontSize = 14.sp,
                 fontFamily = customFontFamily,
                 modifier = Modifier.clickable {
-                    viewModel.sendPasswordResetEmail(emailState.value.text)
+                    email= emailState.value.text.trim()
+                    if(isValidEmail(emailState.value.text.trim())){
+                        viewModel.sendPasswordResetEmail(emailState.value.text.trim())
+                        navigateToScreen(
+                            navController = navController,
+                            route = Screen.ForgotPasswordScreen.route
+                        )
+                    }
+                    else{
+                        emailIncorrectMessage="Invalid Email"
+                        viewModel.emailValid.value=false
+                    }
+
                 })
         }
         Button(
