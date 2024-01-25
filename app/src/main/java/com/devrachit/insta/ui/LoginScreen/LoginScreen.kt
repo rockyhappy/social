@@ -1,5 +1,6 @@
 package com.devrachit.insta.ui.LoginScreen
 
+import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -52,6 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Constants.Constants.Companion.email
+import com.devrachit.insta.Dashboard
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
 import com.devrachit.insta.ui.theme.gray
@@ -67,7 +69,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-
 
 @Composable
 fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
@@ -91,13 +92,17 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
 
     val loading by  viewModel.inProgress.collectAsStateWithLifecycle()
 
+    val context= LocalContext.current
+
     LaunchedEffect(viewModel.loginComplete.value) {
         if (viewModel.loginComplete.value) {
             if (viewModel.userEmailVerified.value) {
-                navigateToScreen(
-                    navController = navController,
-                    route = Screen.DashboardScreen.route
-                )
+//                navigateToScreen(
+//                    navController = navController,
+//                    route = Screen.DashboardScreen.route
+//                )
+                    val intent = Intent(context, Dashboard::class.java)
+                    context.startActivity(intent)
             } else {
                 navigateToScreen(
                     navController = navController,
@@ -106,7 +111,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
             }
         }
     }
-    val context = LocalContext.current
     val token = Constants.web_Client_Id
 
     val launcher = rememberLauncherForActivityResult(
