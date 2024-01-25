@@ -1,5 +1,6 @@
 package com.devrachit.insta.util
 
+import android.media.Image
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
@@ -21,15 +22,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,9 +51,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.viewpager2.widget.ViewPager2
 import coil.compose.rememberAsyncImagePainter
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.ui.theme.errorColor
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -241,3 +249,26 @@ fun errorFeild2(message:String="" , showMessage: Boolean){
         )
     }
 }
+
+//@Composable
+//fun runningHorizontalPager()
+//{
+//    val images = listOf<Image>()
+//    val pagerState = rememberPagerState(pageCount = images.size)
+//
+//    val pageState = rememberPagerState(pageCount = 4)
+//    HorizontalPager(
+//        state = pageState,
+//        pageSize = PageSize.Fixed(200.dp),
+//        beyondBoundsPageCount = 10
+//    ) {
+//
+//    }
+//
+//    LaunchedEffect(pageState.currentPage) {
+//        delay(3000)
+//        var newPosition = pageState.currentPage + 1
+//        if (newPosition > images.lastIndex) newPosition = 0
+//        pageState.animateScrollToPage(newPosition)
+//    }
+//}

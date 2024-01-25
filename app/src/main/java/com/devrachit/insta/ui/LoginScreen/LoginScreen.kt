@@ -1,4 +1,4 @@
-package com.devrachit.insta.screens
+package com.devrachit.insta.ui.LoginScreen
 
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -48,8 +48,10 @@ import androidx.navigation.NavController
 import com.devrachit.insta.R
 import com.devrachit.insta.ui.theme.primaryColor
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
+import com.devrachit.insta.Constants.Constants.Companion.email
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
 import com.devrachit.insta.ui.theme.gray
@@ -60,7 +62,6 @@ import com.devrachit.insta.util.errorFeild2
 import com.devrachit.insta.util.isValidEmail
 import com.devrachit.insta.util.isValidPassword
 import com.devrachit.insta.util.navigateToScreen
-import com.devrachit.insta.viewModel.LoginViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -85,8 +86,10 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
 
     val scrollState = rememberScrollState()
 
-    var passwordIncorrectMessage="Incorrect Message"
-    var emailIncorrectMessage="Incorrect Email"
+    var passwordIncorrectMessage = "Incorrect Message"
+    var emailIncorrectMessage = "Incorrect Email"
+
+    val loading by  viewModel.inProgress.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.loginComplete.value) {
         if (viewModel.loginComplete.value) {
@@ -105,11 +108,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
     }
     val context = LocalContext.current
     val token = Constants.web_Client_Id
-    val launcherNav = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) {
-        navController.navigate(Screen.DashboardScreen.route)
-    }
+
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult(),
     ) {
@@ -119,7 +118,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                     .getResult(ApiException::class.java)
                 val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
                 FirebaseAuth.getInstance().signInWithCredential(credential)
-                    .addOnCompleteListener {task->
+                    .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
 
                             val user = FirebaseAuth.getInstance().currentUser
@@ -127,14 +126,18 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                                 val uid = it.uid.toString()
                                 val email = it.email.toString()
                                 val username = it.displayName.toString()
-                                viewModel.updateUser(email, username,uid)
+                                viewModel.updateUser(email, username, uid)
                             }
 
-                            navigateToScreen(navController,Screen.DashboardScreen.route)
+                            navController.navigate(Screen.DashboardScreen.route) {
+                                popUpTo(0) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
                         }
                     }
-            }
-            catch (e: ApiException) {
+            } catch (e: ApiException) {
                 Log.w("TAG", "GoogleSign in Failed", e)
             }
     }
@@ -176,14 +179,14 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                 Text(text = "Enter Email", fontFamily = customFontFamily)
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if(viewModel.emailValid.value) primaryColor else errorColor,
-                focusedLabelColor = if(viewModel.emailValid.value) primaryColor else errorColor,
-                cursorColor = if(viewModel.emailValid.value) primaryColor else errorColor,
-                unfocusedBorderColor = if(viewModel.emailValid.value) gray else errorColor,
-                unfocusedLabelColor = if(viewModel.emailValid.value) gray else errorColor
+                focusedBorderColor = if (viewModel.emailValid.value) primaryColor else errorColor,
+                focusedLabelColor = if (viewModel.emailValid.value) primaryColor else errorColor,
+                cursorColor = if (viewModel.emailValid.value) primaryColor else errorColor,
+                unfocusedBorderColor = if (viewModel.emailValid.value) gray else errorColor,
+                unfocusedLabelColor = if (viewModel.emailValid.value) gray else errorColor
             )
         )
-        errorFeild2(emailIncorrectMessage,viewModel.emailValid.value)
+        errorFeild(emailIncorrectMessage, viewModel.emailValid.value)
         OutlinedTextField(
             value = passwordState.value,
             onValueChange = { passwordState.value = it },
@@ -196,7 +199,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                 Text(text = "Enter Password", fontFamily = customFontFamily)
             },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if(viewModel.passwordValid.value) primaryColor else errorColor,
+                focusedBorderColor = if (viewModel.passwordValid.value) primaryColor else errorColor,
                 focusedLabelColor = if (viewModel.passwordValid.value) primaryColor else errorColor,
                 cursorColor = if (viewModel.passwordValid.value) primaryColor else errorColor,
                 unfocusedBorderColor = if (viewModel.passwordValid.value) gray else errorColor,
@@ -212,28 +215,40 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                 }
             }
         )
-        errorFeild(passwordIncorrectMessage,viewModel.passwordValid.value)
+        errorFeild(passwordIncorrectMessage, viewModel.passwordValid.value)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(top = 6.dp, end = 24.dp)
-                ,
+                .padding(top = 6.dp, end = 24.dp),
             horizontalArrangement = Arrangement.End
         ) {
             Text(text = "Forgot Password?",
                 fontSize = 14.sp,
                 fontFamily = customFontFamily,
-                modifier = Modifier.clickable {  })
+                modifier = Modifier.clickable {
+                    email= emailState.value.text.trim()
+                    if(isValidEmail(emailState.value.text.trim())){
+                        viewModel.sendPasswordResetEmail(emailState.value.text.trim())
+                        navigateToScreen(
+                            navController = navController,
+                            route = Screen.ForgotPasswordScreen.route
+                        )
+                    }
+                    else{
+                        emailIncorrectMessage="Invalid Email"
+                        viewModel.emailValid.value=false
+                    }
+
+                })
         }
         Button(
             onClick = {
-                if(viewModel.loginCheck(emailState.value.text.trim(),passwordState.value.text)
+                if (viewModel.loginCheck(emailState.value.text.trim(), passwordState.value.text)
                     && isValidEmail(emailState.value.text)
                     && isValidPassword(passwordState.value.text)
-                    )
-                {
-                   viewModel.loginUser(emailState.value.text,passwordState.value.text)
+                ) {
+                    viewModel.loginUser(emailState.value.text, passwordState.value.text)
 //                    if(viewModel.userEmailVerified.value){
 //                        navigateToScreen(
 //                            navController = navController,
@@ -340,8 +355,25 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
             modifier = Modifier
                 .padding(42.dp)
         ) {
-            Text(text = "Don't have an Account? ", fontFamily = customFontFamily)
-            Text(text = "SignUp", fontWeight = FontWeight.Bold, fontFamily = customFontFamily)
+            Text(
+                text = "Don't have an Account? ",
+                fontFamily = customFontFamily,
+                modifier = Modifier.clickable {
+                    navigateToScreen(
+                        navController = navController,
+                        Screen.SignupScreen.route
+                    )
+                })
+            Text(
+                text = "SignUp",
+                fontWeight = FontWeight.Bold,
+                fontFamily = customFontFamily,
+                modifier = Modifier.clickable {
+                    navigateToScreen(
+                        navController = navController,
+                        Screen.SignupScreen.route
+                    )
+                })
         }
     }
 

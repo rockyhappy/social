@@ -1,4 +1,4 @@
-package com.devrachit.insta.screens
+package com.devrachit.insta.ui.DashBoardScreens
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
