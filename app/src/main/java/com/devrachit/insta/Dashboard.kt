@@ -32,9 +32,11 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.devrachit.insta.Models.ProfileSharedViewModel
 import com.devrachit.insta.ui.DashBoardScreens.ChatScreen.chatScreen
 import com.devrachit.insta.ui.DashBoardScreens.HomeScreen.homeScreen
 import com.devrachit.insta.ui.DashBoardScreens.MessagesScreen.messageScreen
@@ -48,36 +50,36 @@ import dagger.hilt.android.AndroidEntryPoint
 
 
 data class BottomNavigationItem(
-    val title :String,
-    val selectedIcon:ImageVector,
+    val title: String,
+    val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
     val hasNotification: Boolean,
-    val badgeCounter :Int?=null,
+    val badgeCounter: Int? = null,
     val route: String
 )
 
-sealed class DashboardScreen(val route:String)
-{
-    object HomeScreen :DashboardScreen("HomeScreen")
-    object SearchScreen:DashboardScreen("SearchScreen")
-    object ReelsScreen :DashboardScreen("ReelsScreen")
-    object ChatScreen :DashboardScreen("ShopScreen")
-    object ProfileScreen :DashboardScreen("ProfileScreen")
+sealed class DashboardScreen(val route: String) {
+    object HomeScreen : DashboardScreen("HomeScreen")
+    object SearchScreen : DashboardScreen("SearchScreen")
+    object ReelsScreen : DashboardScreen("ReelsScreen")
+    object ChatScreen : DashboardScreen("ShopScreen")
+    object ProfileScreen : DashboardScreen("ProfileScreen")
 }
+
 @AndroidEntryPoint
 class Dashboard : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            window.statusBarColor= Color.BLACK
-            window.navigationBarColor= Color.BLACK
+            window.statusBarColor = Color.BLACK
+            window.navigationBarColor = Color.BLACK
             InstaTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val items= listOf(
+                    val items = listOf(
                         BottomNavigationItem(
                             title = "Home",
                             selectedIcon = ImageVector.vectorResource(id = R.drawable.home_selected),
@@ -122,37 +124,35 @@ class Dashboard : ComponentActivity() {
                     navController.addOnDestinationChangedListener { _, destination, _ ->
                         selectedItemIndex = items.indexOfFirst { it.route == destination.route }
                     }
-                    Scaffold (
+                    Scaffold(
                         bottomBar = {
                             NavigationBar(
                                 containerColor = black,
                             ) {
                                 items.forEachIndexed { index, bottomNavigationItem ->
                                     NavigationBarItem(
-                                        modifier= Modifier
+                                        modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(56.dp)
-                                            .align(CenterVertically)
-                                        ,
+                                            .height(40.dp)
+                                            .align(CenterVertically),
                                         icon = {
 //                                            BadgedBox(badge = {
 //                                                if(bottomNavigationItem.hasNotification) {
 //                                                    Text(text = bottomNavigationItem.badgeCounter.toString())
 //                                                }
 //                                            }) {
-                                                Icon(
-                                                    imageVector =
-                                                    if (selectedItemIndex == index)
-                                                        bottomNavigationItem.selectedIcon
-                                                    else
-                                                        bottomNavigationItem.unselectedIcon
-                                                    ,
-                                                    contentDescription =null,
-                                                    modifier = Modifier
-                                                        .width(24.dp)
-                                                        .height(24.dp)
+                                            Icon(
+                                                imageVector =
+                                                if (selectedItemIndex == index)
+                                                    bottomNavigationItem.selectedIcon
+                                                else
+                                                    bottomNavigationItem.unselectedIcon,
+                                                contentDescription = null,
+                                                modifier = Modifier
+                                                    .width(24.dp)
+                                                    .height(24.dp)
 
-                                                )
+                                            )
 //                                            }
 
                                         },
@@ -174,23 +174,28 @@ class Dashboard : ComponentActivity() {
                                 }
                             }
                         }
-                    ){
+                    ) {
                         println(it.toString())
-                        NavHost(navController = navController, startDestination = DashboardScreen.HomeScreen.route){
-                            composable(DashboardScreen.HomeScreen.route){
-                                homeScreen(navController)
+                        val sharedModel: ProfileSharedViewModel = viewModel()
+
+                        NavHost(
+                            navController = navController,
+                            startDestination = DashboardScreen.HomeScreen.route
+                        ) {
+                            composable(DashboardScreen.HomeScreen.route) {
+                                homeScreen(navController, sharedModel)
                             }
-                            composable(DashboardScreen.SearchScreen.route){
-                                searchScreen(navController)
+                            composable(DashboardScreen.SearchScreen.route) {
+                                searchScreen(navController, sharedModel)
                             }
-                            composable(DashboardScreen.ReelsScreen.route){
-                                tapesScreen(navController)
+                            composable(DashboardScreen.ReelsScreen.route) {
+                                tapesScreen(navController, sharedModel)
                             }
-                            composable(DashboardScreen.ChatScreen.route){
-                                chatScreen(navController)
+                            composable(DashboardScreen.ChatScreen.route) {
+                                chatScreen(navController, sharedModel)
                             }
-                            composable(DashboardScreen.ProfileScreen.route){
-                                messageScreen(navController)
+                            composable(DashboardScreen.ProfileScreen.route) {
+                                messageScreen(navController, sharedModel)
                             }
                         }
                     }
