@@ -1,5 +1,6 @@
 package com.devrachit.insta.ui.SplashScreen
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,12 +18,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.devrachit.insta.Constants.Constants
+import com.devrachit.insta.Dashboard
 import com.devrachit.insta.R
 import com.devrachit.insta.Screen
 import com.devrachit.insta.util.navigateToScreen
@@ -33,12 +36,17 @@ import com.devrachit.insta.ui.SplashScreen.SplashScreenViewModel
 fun SplashScreen(navController: NavController, viewModel: SplashScreenViewModel) {
     val loading by  viewModel.inProgress.collectAsStateWithLifecycle()
     val load by viewModel.load.collectAsStateWithLifecycle()
+
+    val context= LocalContext.current
     LaunchedEffect(load){
         if(viewModel.checkUserLoggedIn()
 //            && viewModel.sharedViewModel.emailVerified
             ){
 
-            navigateToScreen(navController = navController, route = Screen.DashboardScreen.route)
+//            navigateToScreen(navController = navController, route = Screen.DashboardScreen.route)
+
+            val intent = Intent(context, Dashboard::class.java)
+            context.startActivity(intent)
         }
         else{
             navigateToScreen(navController = navController, route = Screen.ChoiceScreen.route)

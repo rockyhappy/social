@@ -2,6 +2,7 @@ package com.devrachit.insta.hilt
 
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
+import com.devrachit.insta.Models.ProfileSharedViewModel
 
 import com.devrachit.insta.Models.SharedViewModel
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -19,6 +20,7 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import java.lang.invoke.MethodHandles.identity
 import com.google.android.gms.auth.api.identity.*
+import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)

@@ -54,6 +54,7 @@ import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Constants.Constants.Companion.email
 import com.devrachit.insta.Dashboard
+import com.devrachit.insta.DashboardScreen
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
 import com.devrachit.insta.ui.theme.gray
@@ -87,12 +88,12 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
 
     val scrollState = rememberScrollState()
 
+    val context = LocalContext.current
+
     var passwordIncorrectMessage = "Incorrect Message"
     var emailIncorrectMessage = "Incorrect Email"
 
     val loading by  viewModel.inProgress.collectAsStateWithLifecycle()
-
-    val context= LocalContext.current
 
     LaunchedEffect(viewModel.loginComplete.value) {
         if (viewModel.loginComplete.value) {
@@ -101,8 +102,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
 //                    navController = navController,
 //                    route = Screen.DashboardScreen.route
 //                )
-                    val intent = Intent(context, Dashboard::class.java)
-                    context.startActivity(intent)
+                val intent= Intent(context, Dashboard::class.java)
+                context.startActivity(intent)
             } else {
                 navigateToScreen(
                     navController = navController,
@@ -111,6 +112,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
             }
         }
     }
+
     val token = Constants.web_Client_Id
 
     val launcher = rememberLauncherForActivityResult(
@@ -133,12 +135,14 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
                                 viewModel.updateUser(email, username, uid)
                             }
 
-                            navController.navigate(Screen.DashboardScreen.route) {
-                                popUpTo(0) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            }
+//                            navController.navigate(Screen.DashboardScreen.route) {
+//                                popUpTo(0) {
+//                                    inclusive = true
+//                                }
+//                                launchSingleTop = true
+//                            }
+                            val intent= Intent(context, Dashboard::class.java)
+                            context.startActivity(intent)
                         }
                     }
             } catch (e: ApiException) {

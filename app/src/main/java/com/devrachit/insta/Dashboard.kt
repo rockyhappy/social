@@ -2,26 +2,19 @@ package com.devrachit.insta
 
 
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -30,9 +23,9 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -42,6 +35,7 @@ import com.devrachit.insta.ui.DashBoardScreens.HomeScreen.homeScreen
 import com.devrachit.insta.ui.DashBoardScreens.MessagesScreen.messageScreen
 import com.devrachit.insta.ui.DashBoardScreens.SearchScreen.searchScreen
 import com.devrachit.insta.ui.DashBoardScreens.TapesScreen.tapesScreen
+import com.devrachit.insta.ui.DashBoardScreens.profileScreen.profileScreen
 import com.devrachit.insta.ui.theme.InstaTheme
 import com.devrachit.insta.ui.theme.black
 import com.devrachit.insta.ui.theme.primaryColor
@@ -64,6 +58,7 @@ sealed class DashboardScreen(val route: String) {
     object ReelsScreen : DashboardScreen("ReelsScreen")
     object ChatScreen : DashboardScreen("ShopScreen")
     object ProfileScreen : DashboardScreen("ProfileScreen")
+    object ProfileScreenMain : DashboardScreen("ProfileScreenMain")
 }
 
 @AndroidEntryPoint
@@ -120,14 +115,23 @@ class Dashboard : ComponentActivity() {
                         mutableStateOf(0)
                     }
                     val navController = rememberNavController()
+                    val sharedModel: ProfileSharedViewModel = hiltViewModel()
+                    sharedModel.setBottomNavigationVisibility(true)
+                    val bottomNavigationVisibility by sharedModel.bottomNavigationVisibilityLiveData.collectAsStateWithLifecycle()
 
                     navController.addOnDestinationChangedListener { _, destination, _ ->
                         selectedItemIndex = items.indexOfFirst { it.route == destination.route }
                     }
                     Scaffold(
-                        bottomBar = {
+                        bottomBar =
+                        {
                             NavigationBar(
                                 containerColor = black,
+                                modifier = if(bottomNavigationVisibility==true) {
+                                    Modifier
+                                } else {
+                                    Modifier.height(0.dp)
+                                },
                             ) {
                                 items.forEachIndexed { index, bottomNavigationItem ->
                                     NavigationBarItem(
@@ -176,7 +180,6 @@ class Dashboard : ComponentActivity() {
                         }
                     ) {
                         println(it.toString())
-                        val sharedModel: ProfileSharedViewModel = viewModel()
 
                         NavHost(
                             navController = navController,
@@ -196,6 +199,9 @@ class Dashboard : ComponentActivity() {
                             }
                             composable(DashboardScreen.ProfileScreen.route) {
                                 messageScreen(navController, sharedModel)
+                            }
+                            composable(DashboardScreen.ProfileScreenMain.route) {
+                                profileScreen(navController, sharedModel)
                             }
                         }
                     }

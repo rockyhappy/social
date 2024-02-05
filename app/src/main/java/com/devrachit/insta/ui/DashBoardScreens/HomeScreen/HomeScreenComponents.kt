@@ -34,6 +34,7 @@ import com.devrachit.insta.ui.theme.grayShade1
 import com.devrachit.insta.ui.theme.grayShade2
 import com.devrachit.insta.ui.theme.grayShade3
 import com.devrachit.insta.ui.theme.primaryColor
+import com.devrachit.insta.util.clickableWithoutRipple
 
 @Composable
 fun FAB(
@@ -76,25 +77,30 @@ fun topBar(
     {
         ImageExample(
             imageUrl,
-            modifier = Modifier.padding(start = 16.dp)
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .clickableWithoutRipple(onProfileClick)
         )
 
-        Column{
+        Column {
             Text(
-                text="Good Morning",
-                modifier = Modifier.padding(start = 12.dp),
+                text = "Good Morning",
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .clickableWithoutRipple(onProfileClick),
                 fontFamily = customFontFamily,
                 fontSize = 12.sp,
                 color = gray
             )
             Text(
-//            text = userName,
-                text = "Rachit",
-                modifier = Modifier.padding(start = 12.dp),
+                text = userName,
+                modifier = Modifier
+                    .padding(start = 12.dp)
+                    .clickableWithoutRipple(onProfileClick),
                 fontFamily = customFontFamily,
                 fontSize = 12.sp,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                color= grayShade3
+                color = grayShade3
             )
         }
 

@@ -1,5 +1,6 @@
 package com.devrachit.insta.ui.VerifyEmailScreen
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +43,8 @@ import androidx.navigation.NavController
 import com.devrachit.insta.Constants.Constants
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Constants.Constants.Companion.email
+import com.devrachit.insta.Constants.Constants.Companion.userVerify
+import com.devrachit.insta.Dashboard
 import com.devrachit.insta.R
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
@@ -55,7 +59,17 @@ import kotlinx.coroutines.delay
 fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel) {
 
     if (viewModel.userEmailVerified.value) {
-        navigateToScreen(navController = navController, route = Screen.DashboardScreen.route)
+//        navigateToScreen(navController = navController, route = Screen.DashboardScreen.route)
+        val context= LocalContext.current
+        val intent = Intent(context, Dashboard::class.java)
+        context.startActivity(intent)
+    }
+    val context= LocalContext.current
+    LaunchedEffect(key1 =true) {
+        if(viewModel.checkEmailVerification()) {
+            val intent = Intent(context, Dashboard::class.java)
+            context.startActivity(intent)
+        }
     }
     val loading by viewModel.inProgress.collectAsStateWithLifecycle()
     Column(

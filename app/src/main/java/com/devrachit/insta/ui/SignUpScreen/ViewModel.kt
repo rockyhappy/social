@@ -161,6 +161,11 @@ class LCViewModel @Inject constructor(
                         "uid" to auth.currentUser?.uid,
                         "profilePic" to "https://firebasestorage.googleapis.com/v0/b/twingle-c1acb.appspot.com/o/avatar.png?alt=media&token=cc768fc6-57c1-4326-a874-4f0fd3bbe5de",
                         "emailVerified" to false,
+                        "followers" to 0,
+                        "following" to 0,
+                        "postCount" to 0,
+                        "bio" to "hey there! I am using Twingle",
+                        "userVerified" to true
                     )
 
                     db.collection(USER_NODE).document(auth.currentUser?.uid.toString()).set(user)
@@ -227,7 +232,12 @@ class LCViewModel @Inject constructor(
                     "userName" to sharedViewModel.userName,
                     "uid" to auth.currentUser?.uid,
                     "profilePic" to "https://firebasestorage.googleapis.com/v0/b/insta-clone-1e9f0.appspot.com/o/profilePic%2Fdefault.png?alt=media&token=8b8b8b1a-7b9e-4b9e-9b0a-9b9b9b9b9b9b",
-                    "emailVerified" to auth.currentUser?.isEmailVerified
+                    "emailVerified" to auth.currentUser?.isEmailVerified,
+                    "followers" to 0,
+                    "following" to 0,
+                    "postCount" to 0,
+                    "bio" to "hey there! I am using Twingle",
+                    "userVerified" to true
                 )
 
                 db.collection(USER_NODE).document(auth.currentUser?.uid.toString()).set(user)
@@ -254,7 +264,11 @@ class LCViewModel @Inject constructor(
             "userName" to sharedViewModel.userName,
             "uid" to auth.currentUser?.uid,
             "profilePic" to "https://firebasestorage.googleapis.com/v0/b/insta-clone-1e9f0.appspot.com/o/profilePic%2Fdefault.png?alt=media&token=8b8b8b1a-7b9e-4b9e-9b0a-9b9b9b9b9b9b",
-            "emailVerified" to true
+            "emailVerified" to true,
+            "followers" to 0,
+            "following" to 0,
+            "postCount" to 0
+
         )
 
         db.collection(USER_NODE).document(auth.currentUser?.uid.toString()).set(user)
