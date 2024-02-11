@@ -121,10 +121,14 @@ dependencies {
 
         implementation("androidx.compose.material:material-icons-extended:1.6.0-alpha08")
 
-//    implementation ("com.google.ar:core:1.16.0")
-//
-//    implementation("com.google.ar.sceneform.ux:sceneform-ux:1.15.0")
-//    implementation ("com.google.ar.sceneform:core:1.15.0")
-//    implementation ("com.google.ar.sceneform:animation:1.15.0")
-
+    implementation ("com.google.ar:core:1.41.0")
+    implementation ("com.google.firebase:firebase-ml-vision-face-model:20.0.2")
+    implementation (platform("com.google.firebase:firebase-bom:32.7.2"))
+    implementation("com.google.ar.sceneform.ux:sceneform-ux:1.17.1")
+    implementation ("com.google.ar.sceneform:core:1.17.1")
+    implementation ("com.google.ar.sceneform:animation:1.17.1")
+    implementation ("com.google.firebase:firebase-ml-vision:24.10.2")
+    implementation ("com.google.firebase:firebase-core:21.1.1")
+    implementation ("android.arch.lifecycle:extensions:1.1.1")
+    implementation ("com.otaliastudios:cameraview:2.7.2")
 }
