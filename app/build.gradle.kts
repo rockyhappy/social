@@ -63,8 +63,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("com.google.firebase:firebase-auth:22.3.0")
-    implementation("com.google.firebase:firebase-firestore:24.10.0")
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.google.firebase:firebase-firestore:24.10.1")
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("androidx.viewpager2:viewpager2:1.0.0")
     implementation("com.google.android.material:material:1.11.0")
@@ -80,13 +80,17 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation ("androidx.compose.runtime:runtime-livedata:1.5.4")
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-    implementation("androidx.compose.runtime:runtime-rxjava2:1.5.4")
-    implementation("androidx.compose.runtime:runtime-rxjava3:1.5.4")
-
+    implementation("androidx.compose.runtime:runtime-rxjava3:1.6.0")
+    implementation("androidx.compose.runtime:runtime-rxjava2:1.6.0")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.wear.compose:compose-foundation:1.3.0")
+    implementation("androidx.wear.compose:compose-material:1.3.0")
+    implementation("androidx.wear.compose:compose-navigation:1.3.0")
+    implementation("androidx.wear.compose:compose-ui-tooling:1.3.0")
 
 
     implementation ("com.google.dagger:hilt-android:2.50")
@@ -110,4 +114,17 @@ dependencies {
 
     implementation("io.coil-kt:coil-compose:2.5.0")
     implementation ("com.google.android.gms:play-services-auth:20.7.0")
+
+
+        implementation("io.getstream:stream-chat-android-compose:6.0.8")
+        implementation("io.getstream:stream-chat-android-offline:6.0.8")
+
+        implementation("androidx.compose.material:material-icons-extended:1.6.0-alpha08")
+
+    implementation ("com.google.ar:core:1.16.0")
+
+    implementation("com.google.ar.sceneform.ux:sceneform-ux:1.15.0")
+    implementation ("com.google.ar.sceneform:core:1.15.0")
+    implementation ("com.google.ar.sceneform:animation:1.15.0")
+
 }

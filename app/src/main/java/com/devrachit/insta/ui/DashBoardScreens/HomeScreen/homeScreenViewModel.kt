@@ -52,6 +52,9 @@ class homeScreenViewModel @Inject constructor(
     private val _profileImage = MutableStateFlow("")
     val profileImage : StateFlow<String> =_profileImage
 
+    private val _bio = MutableStateFlow("")
+    val bio : StateFlow<String> =_bio
+
 
     fun getUserData(viewMo: ProfileSharedViewModel) : String
     {
@@ -70,7 +73,7 @@ class homeScreenViewModel @Inject constructor(
                                 _followers.value = document.data?.get("followers").toString().toInt()
                                 _profileImage.value = document.data?.get("profilePic").toString()
                                 _postCount.value = document.data?.get("postCount").toString().toInt()
-
+                                _bio.value = document.data?.get("bio").toString()
                                 println("DocumentSnapshot data: ${document.data}")
 
                             }

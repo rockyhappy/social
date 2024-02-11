@@ -164,8 +164,7 @@ class LCViewModel @Inject constructor(
                         "followers" to 0,
                         "following" to 0,
                         "postCount" to 0,
-                        "bio" to "hey there! I am using Twingle",
-                        "userVerified" to true
+                        "bio" to "hey there! I am using Twingle"
                     )
 
                     db.collection(USER_NODE).document(auth.currentUser?.uid.toString()).set(user)
@@ -267,7 +266,8 @@ class LCViewModel @Inject constructor(
             "emailVerified" to true,
             "followers" to 0,
             "following" to 0,
-            "postCount" to 0
+            "postCount" to 0,
+            "bio" to "hey there! I am using Twingle"
 
         )
 
