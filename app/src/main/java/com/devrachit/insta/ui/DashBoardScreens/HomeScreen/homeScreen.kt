@@ -1,5 +1,6 @@
 package com.devrachit.insta.ui.DashBoardScreens.HomeScreen
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.animation.AnimatedVisibility
@@ -37,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.devrachit.insta.DashboardScreen
+import com.devrachit.insta.MainActivity2
 import com.devrachit.insta.Models.ProfileSharedViewModel
 import com.devrachit.insta.R
 import com.devrachit.insta.Screen
@@ -76,6 +78,8 @@ fun homeScreen(navController: NavController, sharedViewModel: ProfileSharedViewM
     }
 
     val onPlayClick:()->Unit={
+        val intent= Intent(context, MainActivity2::class.java)
+        context.startActivity(intent)
         Toast.makeText(context, "Play Clicked", Toast.LENGTH_SHORT).show()
     }
 
