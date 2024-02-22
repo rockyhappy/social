@@ -45,6 +45,7 @@ import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Constants.Constants.Companion.email
 import com.devrachit.insta.Constants.Constants.Companion.userVerify
 import com.devrachit.insta.Dashboard
+import com.devrachit.insta.MainActivity
 import com.devrachit.insta.R
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
@@ -69,6 +70,7 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
         if(viewModel.checkEmailVerification()) {
             val intent = Intent(context, Dashboard::class.java)
             context.startActivity(intent)
+
         }
     }
     val loading by viewModel.inProgress.collectAsStateWithLifecycle()

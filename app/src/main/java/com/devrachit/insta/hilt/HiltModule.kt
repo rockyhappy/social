@@ -46,24 +46,24 @@ class HiltModule {
     @Provides
     fun provideSharedViewModel(): SharedViewModel = SharedViewModel()
 
-    @Provides
-    fun provideOfflinePluginFactory(@ApplicationContext context: Context) =
-        StreamOfflinePluginFactory(
-            appContext = context
-        )
+//    @Provides
+//    fun provideOfflinePluginFactory(@ApplicationContext context: Context) =
+//        StreamOfflinePluginFactory(
+//            appContext = context
+//        )
 
-    @Provides
-    fun provideStatePluginFactory(@ApplicationContext context: Context)=
-        StreamStatePluginFactory(
-            config = StatePluginConfig(),
-            appContext = context)
-
-
-    @Singleton
-    @Provides
-    fun provideChatClient(@ApplicationContext context: Context, offlinePluginFactory: StreamOfflinePluginFactory,statePluginFactory: StreamStatePluginFactory) =
-        ChatClient.Builder(context.getString(R.string.key), context)
-            .withPlugins(offlinePluginFactory,statePluginFactory)
-            .logLevel(ChatLogLevel.ALL)
-            .build()
+//    @Provides
+//    fun provideStatePluginFactory(@ApplicationContext context: Context)=
+//        StreamStatePluginFactory(
+//            config = StatePluginConfig(),
+//            appContext = context)
+//
+//
+//    @Singleton
+//    @Provides
+//    fun provideChatClient(@ApplicationContext context: Context, offlinePluginFactory: StreamOfflinePluginFactory,statePluginFactory: StreamStatePluginFactory) =
+//        ChatClient.Builder(context.getString(R.string.key), context)
+//            .withPlugins(offlinePluginFactory,statePluginFactory)
+//            .logLevel(ChatLogLevel.ALL)
+//            .build()
 }
