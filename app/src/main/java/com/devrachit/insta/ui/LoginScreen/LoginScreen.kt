@@ -55,6 +55,7 @@ import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
 import com.devrachit.insta.Constants.Constants.Companion.email
 import com.devrachit.insta.Dashboard
 import com.devrachit.insta.DashboardScreen
+import com.devrachit.insta.MainActivity
 import com.devrachit.insta.Screen
 import com.devrachit.insta.ui.theme.errorColor
 import com.devrachit.insta.ui.theme.gray
@@ -104,6 +105,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
 //                )
                 val intent= Intent(context, Dashboard::class.java)
                 context.startActivity(intent)
+                (context as MainActivity).finish()
             } else {
                 navigateToScreen(
                     navController = navController,

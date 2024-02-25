@@ -64,12 +64,14 @@ fun CheckYourMail(navController: NavController, viewModel: VerifyEmailViewModel)
         val context= LocalContext.current
         val intent = Intent(context, Dashboard::class.java)
         context.startActivity(intent)
+        (context as MainActivity).finish()
     }
     val context= LocalContext.current
     LaunchedEffect(key1 =true) {
         if(viewModel.checkEmailVerification()) {
             val intent = Intent(context, Dashboard::class.java)
             context.startActivity(intent)
+            (context as MainActivity).finish()
 
         }
     }
