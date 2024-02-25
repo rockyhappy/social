@@ -3,6 +3,8 @@ package com.devrachit.insta.ui.LoginScreen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+
+import com.devrachit.insta.Constants.Constants.Companion.userVerify
 import com.devrachit.insta.Models.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -19,7 +21,7 @@ class LoginViewModel @Inject constructor(
     val auth: FirebaseAuth,
     val db: FirebaseFirestore,
     val storage: FirebaseStorage,
-    val sharedViewModel: SharedViewModel
+//    val sharedViewModel: SharedViewModel
 ) : ViewModel() {
 
     val emailValid = mutableStateOf(true)
@@ -42,13 +44,18 @@ class LoginViewModel @Inject constructor(
         }
         return true
     }
-
+    val sharedViewModel = SharedViewModel()
 
     fun loginUser(email: String, password: String) {
         viewModelScope.launch {
             loading.value = true
+            _inProgress.value=true
             try {
                 val signInResult = auth.signInWithEmailAndPassword(email, password).await()
+                if (auth.currentUser?.isEmailVerified == true) {
+                    userEmailVerified.value = true
+                    userVerify=true
+                }
                 if (signInResult.user != null) {
                     auth.currentUser?.reload()?.await()
                     sharedViewModel.email = email
@@ -65,6 +72,7 @@ class LoginViewModel @Inject constructor(
                         println("Email Sent")
                         if (auth.currentUser?.isEmailVerified == true) {
                             userEmailVerified.value = true
+                            userVerify=true
                         } else {
                             println("Email verification failed")
                         }
@@ -79,6 +87,7 @@ class LoginViewModel @Inject constructor(
             } finally {
                 loginComplete.value = true
                 loading.value = false
+                _inProgress.value=false
             }
         }
     }

@@ -277,12 +277,15 @@ fun SignupScreen(navController: NavController, viewModel: LCViewModel) {
 
         ) {
             if (viewModel.loading.value || loading ) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .aspectRatio(1f),
-                    color = primaryColor
-                )
+//                CircularProgressIndicator(
+//                    modifier = Modifier
+//                        .fillMaxHeight()
+//                        .aspectRatio(1f),
+//                    color = primaryColor
+//                )
+//                CircularProgressIndicator(
+//                    color = primaryColor
+//                )
             } else {
                 Text(
                     "Continue",
