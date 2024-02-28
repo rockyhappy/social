@@ -42,8 +42,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -95,7 +97,7 @@ fun profileScreen(
 
     var selected by remember { mutableStateOf(1) }
     val loadingComplete = viewModel.loadingComplete.collectAsStateWithLifecycle().value
-    val tapesLoadingComplete=viewModel.tapesLoadingComplete.collectAsStateWithLifecycle().value
+    val tapesLoadingComplete = viewModel.tapesLoadingComplete.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = true) {
 //        Toast.makeText(context, sharedViewModel., Toast.LENGTH_SHORT).show()
         viewModel.loadUserPosts()
@@ -105,7 +107,9 @@ fun profileScreen(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .background(color = grayShade2),
+            .background(color = grayShade2)
+//            .verticalScroll(rememberScrollState())
+        ,
     )
     {
 
@@ -116,10 +120,13 @@ fun profileScreen(
                 .fillMaxHeight()
                 .padding(horizontal = 16.dp)
                 .background(color = grayShade2),
+//                .nestedScroll(rememberNestedScrollInteropConnection())
+//                .verticalScroll(rememberScrollState())
             horizontalAlignment = Alignment.CenterHorizontally,
 
+
             ) {
-//            item {
+
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
@@ -259,38 +266,43 @@ fun profileScreen(
                 grayButton(onClick = { onShareProfileClick.invoke() }, text = "Share Profile")
             }
 
+
             /**
              * This is the navigation Row
              * with 4 button Photos Tapes Stories Tagged
              */
 
             ProfileNavigation(selected = selected, onItemSelected = { selected = it })
+        }
 
-            when (selected) {
-                1 -> {
-                    if (loadingComplete) {
-                        StaggeredPostList(items = viewModel.posts)
-                    }
 
+
+
+        when (selected) {
+            1 -> {
+                if (loadingComplete) {
+                    StaggeredPostList(items = viewModel.posts)
                 }
 
-                2 -> {
-                    if(tapesLoadingComplete) {
-                        StaggeredTapesList(items =viewModel.tapes, context)
-                    }
-
-
-                }
-
-                3 -> {
-
-                }
-
-                4 -> {
-
-                }
             }
 
+            2 -> {
+                if (tapesLoadingComplete) {
+                    StaggeredTapesList(items = viewModel.tapes, context)
+                }
+
+
+            }
+
+            3 -> {
+
+            }
+
+            4 -> {
+
+            }
         }
     }
 }
+
+
