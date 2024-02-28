@@ -62,6 +62,7 @@ class LoginViewModel @Inject constructor(
                     sharedViewModel.password = password
                     sharedViewModel.userName = db.collection("users").document(auth.currentUser?.uid!!).get().await().get("userName").toString()
                     sharedViewModel.emailVerified = db.collection("users").document(auth.currentUser?.uid!!).get().await().get("emailVerified").toString().toBoolean()
+
                     println("Email Verified: ${auth.currentUser?.isEmailVerified}")
                     if (
                         auth.currentUser?.isEmailVerified == false ||
@@ -82,10 +83,11 @@ class LoginViewModel @Inject constructor(
                 } else {
                     println("Login failed")
                 }
+                loginComplete.value = true
             } catch (e: Exception) {
                 println("Login failed. Exception: ${e.message}")
             } finally {
-                loginComplete.value = true
+//                loginComplete.value = true
                 loading.value = false
                 _inProgress.value=false
             }

@@ -253,19 +253,6 @@ fun StaggeredTapesList(items: List<Tapes>, context: Context)
         verticalItemSpacing = 16.dp
     ) {
         items(items.size) { item ->
-//            AsyncImage(
-//                model = items[item].imageUrl,
-//                contentScale = ContentScale.Crop,
-//                contentDescription = null,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .wrapContentHeight()
-//                    .clip(
-//                        shape = RoundedCornerShape(
-//                            corner = CornerSize(16.dp)
-//                        )
-//                    )
-//            )
             VideoThumbnailFromUrl(context, items[item].url)
         }
 
