@@ -3,6 +3,7 @@ package com.devrachit.insta.ui.DashBoardScreens.profileScreen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -92,18 +94,12 @@ fun profileScreen(
     }
 
     var selected by remember { mutableStateOf(1) }
-
-//    val staggeredGridState = rememberLazyStaggeredGridState()
-    val items:List<String> = listOf(
-        "https://firebasestorage.googleapis.com/v0/b/twingle-c1acb.appspot.com/o/unsplash_75EFpyXu3Wg.png?alt=media&token=88a94c1d-6d72-4230-a94e-48323128b620",
-        "https://firebasestorage.googleapis.com/v0/b/twingle-c1acb.appspot.com/o/Rectangle%2053.png?alt=media&token=aacb3d59-9b8c-42d1-a1bf-3f00630d4ba1",
-        "https://firebasestorage.googleapis.com/v0/b/twingle-c1acb.appspot.com/o/unsplash_K_Na5gCmh38.png?alt=media&token=d158732e-e9f1-40ec-b07c-040589f4028e",
-        "https://firebasestorage.googleapis.com/v0/b/twingle-c1acb.appspot.com/o/unsplash_crjPrExvShc.png?alt=media&token=c1939730-c826-4798-b268-2353ea258d92",
-        "https://firebasestorage.googleapis.com/v0/b/twingle-c1acb.appspot.com/o/unsplash_gCduzLmwFYM.png?alt=media&token=e8f63fb0-c4ea-4723-a635-4f4eb360f189"
-    )
+    val loadingComplete = viewModel.loadingComplete.collectAsStateWithLifecycle().value
+    val tapesLoadingComplete=viewModel.tapesLoadingComplete.collectAsStateWithLifecycle().value
     LaunchedEffect(key1 = true) {
 //        Toast.makeText(context, sharedViewModel., Toast.LENGTH_SHORT).show()
         viewModel.loadUserPosts()
+        viewModel.loadUserTapes()
     }
     Box(
         modifier = Modifier
@@ -119,12 +115,11 @@ fun profileScreen(
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(horizontal = 16.dp)
-                .background(color = grayShade2)
-
-                ,
+                .background(color = grayShade2),
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ) {
+//            item {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
@@ -271,29 +266,29 @@ fun profileScreen(
 
             ProfileNavigation(selected = selected, onItemSelected = { selected = it })
 
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Fixed(2),
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalItemSpacing = 16.dp
-            ) {
-                items(items.size) { item ->
-                    AsyncImage(
-                        model = items[item],
-                        contentScale = ContentScale.Crop,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .clip(
-                                shape= RoundedCornerShape(
-                                    corner = CornerSize(16.dp)
-                                )
-                            )
-                    )
+            when (selected) {
+                1 -> {
+                    if (loadingComplete) {
+                        StaggeredPostList(items = viewModel.posts)
+                    }
+
                 }
 
+                2 -> {
+                    if(tapesLoadingComplete) {
+                        StaggeredTapesList(items =viewModel.tapes, context)
+                    }
+
+
+                }
+
+                3 -> {
+
+                }
+
+                4 -> {
+
+                }
             }
 
         }

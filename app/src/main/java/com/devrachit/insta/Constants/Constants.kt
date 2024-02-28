@@ -14,6 +14,7 @@ class Constants {
         val MESSAGE_NODE="messages"
         val STATUS_NODE="status"
         val POST_NODE="posts"
+        val TAPES_NODE="tapes"
         val customFontFamily= FontFamily(Font(R.font.sf))
         val web_Client_Id="264833222645-0u7b68os1cka6v2hd3khebd5srdv3fte.apps.googleusercontent.com"
         var email =""

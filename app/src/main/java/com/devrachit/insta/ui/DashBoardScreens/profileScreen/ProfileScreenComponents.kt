@@ -1,12 +1,19 @@
 package com.devrachit.insta.ui.DashBoardScreens.profileScreen
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Insets.add
+import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,28 +21,41 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.TextButtonDefaults
+import coil.ImageLoader
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.decode.VideoFrameDecoder
+import coil.request.videoFrameMillis
 import com.devrachit.insta.Constants.Constants.Companion.customFontFamily
+import com.devrachit.insta.Models.Tapes
 import com.devrachit.insta.R
 import com.devrachit.insta.ui.theme.grayShade1
 import com.devrachit.insta.ui.theme.grayShade4
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 
 @Composable
@@ -190,5 +210,81 @@ private fun ProfileNavigationItem(
                 modifier = Modifier.padding(top = 4.dp)
             )
         }
+    }
+}
+
+@Composable
+ fun StaggeredPostList(items: List<String>)
+{
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalItemSpacing = 16.dp
+    ) {
+
+        items(items.size) { item ->
+            AsyncImage(
+                model = items[item],
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .clip(
+                        shape = RoundedCornerShape(
+                            corner = CornerSize(16.dp)
+                        )
+                    )
+            )
+        }
+
+    }
+}
+@Composable
+fun StaggeredTapesList(items: List<Tapes>, context: Context)
+{
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalItemSpacing = 16.dp
+    ) {
+        items(items.size) { item ->
+//            AsyncImage(
+//                model = items[item].imageUrl,
+//                contentScale = ContentScale.Crop,
+//                contentDescription = null,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .wrapContentHeight()
+//                    .clip(
+//                        shape = RoundedCornerShape(
+//                            corner = CornerSize(16.dp)
+//                        )
+//                    )
+//            )
+            VideoThumbnailFromUrl(context, items[item].url)
+        }
+
+    }
+}
+
+@Composable
+fun VideoThumbnailFromUrl(context: Context, videoUrl: String) {
+    val bitmap: Bitmap? = remember {
+        createVideoThumb(context, Uri.parse(videoUrl))
+    }
+
+    bitmap?.let {
+        Image(
+            bitmap = it.asImageBitmap(),
+            contentDescription = null // Provide content description if needed
+        )
+    } ?: run {
+        // Handle error case
+        Toast.makeText(context, "Error loading video thumbnail", Toast.LENGTH_SHORT).show()
     }
 }

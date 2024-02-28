@@ -103,7 +103,7 @@ dependencies {
     // For local unit tests
     testImplementation ("com.google.dagger:hilt-android-testing:2.50")
     kspTest ("com.google.dagger:hilt-compiler:2.50")
-
+    implementation("io.coil-kt:coil-video:2.6.0")
     //For Navigation
     val nav_version = "2.7.6"
 

@@ -9,3 +9,8 @@ data class UserData(
     val userName: String,
     val profilePictureUrl: String?
 )
+
+data class Tapes(
+    val url: String,
+    val imageUrl: String
+)

@@ -145,6 +145,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel) {
 //                            }
                             val intent= Intent(context, Dashboard::class.java)
                             context.startActivity(intent)
+                            (context as MainActivity).finish()
                         }
                     }
             } catch (e: ApiException) {
