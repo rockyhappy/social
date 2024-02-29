@@ -114,255 +114,207 @@ fun profileScreen(
         viewModel.loadUserPosts()
         viewModel.loadUserTapes()
     }
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-    val scrollBehavior2 = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
-//    var scrollState = rememberScrollState()
-//    var topBarHeight by remember { mutableStateOf(500.dp) }
 
-//    LaunchedEffect(scrollState.value) {
-//        // Listen to the scroll state changes
-//        val outerProgress = scrollState.value / 500f // assuming 500dp is your initial height
-//        // Update the height based on the scroll progress
-//        topBarHeight = (500 - 400 * outerProgress).dp // Adjust the formula as needed
-//    }
-    Scaffold(
-//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        modifier = Modifier.nestedScroll(scrollBehavior2.nestedScrollConnection),
-        topBar = {
-            LargeTopAppBar(
-                title = { Text(text = "dfsbgkjsdfnvl") },
-                navigationIcon = {},
-                actions = {  },
-                scrollBehavior = scrollBehavior2,
-//                modifier=Modifier.height(topBarHeight)
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(color = grayShade2)
+//            .verticalScroll(rememberScrollState())
+        ,
+    )
+    {
+
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(horizontal = 16.dp)
+                .background(color = grayShade2),
+//                .nestedScroll(rememberNestedScrollInteropConnection())
+//                .verticalScroll(rememberScrollState())
+            horizontalAlignment = Alignment.CenterHorizontally,
+
+
+            ) {
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                CircularIconButton(
+                    icon = R.drawable.up_1,
+                    modifier = Modifier.padding(top = 24.dp),
+                    onClick = { onBackClick.invoke() }
+                )
+                ImageExample(
+                    image = sharedViewModel.profileImage.value.toString(),
+                    modifier = Modifier
+                        .padding(top = 64.dp)
+                )
+                CircularIconButton(
+                    icon = R.drawable.menu_meatballs,
+                    modifier = Modifier.padding(top = 24.dp),
+                    onClick = { onMenuClick.invoke() }
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             )
+            {
+                Text(
+                    text = sharedViewModel.username.value.toString(),
+                    fontSize = 24.sp,
+                    fontFamily = customFontFamily,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(top = 8.dp, end = 8.dp),
+                    color = Color.White
+                )
+                if (userVerifiedData.value == true) {
+                    Image(
+                        painter = painterResource(id = R.drawable.verified),
+                        contentDescription = "Verified",
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .size(24.dp)
+                    )
+                }
 
-//                MediumTopAppBar(
-//                    title = { Text(text = "Scroll Behavior Test") },
-//                    navigationIcon = {
-//                        IconButton(onClick = { /*TODO*/ }) {
-//                            Icon(imageVector = Icons.Default.Menu, contentDescription = "")
-//                        }
-//                    },
-//                    scrollBehavior = scrollBehavior
-//                )
+            }
+            Text(
+                text = bio.value.toString(),
+                fontSize = 14.sp,
+                fontFamily = customFontFamily,
+                modifier = Modifier.padding(top = 2.dp),
+                color = grayShade5
+            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            )
+            {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                )
+                {
+                    Text(
+                        text = postCount.toString(),
+                        fontSize = 20.sp,
+                        fontFamily = customFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp),
+                        color = Color.White
+                    )
+                    Text(
+                        text = "Posts",
+                        fontSize = 14.sp,
+                        fontFamily = customFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        color = grayShade4
+                    )
+                }
 
-        },
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                )
+                {
+                    Text(
+                        text = followers.toString(),
+                        fontSize = 20.sp,
+                        fontFamily = customFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp),
+                        color = Color.White
+                    )
+                    Text(
+                        text = "Followers",
+                        fontSize = 14.sp,
+                        fontFamily = customFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 1.dp),
+                        color = grayShade4
+                    )
 
-    ) {
-//        Box(
-//            modifier= Modifier
-//                .background(primaryColor)
-//                .fillMaxWidth()
-//                .height(150.dp)
-//        ){
-//        }
-        println(it.toString())
-        if(loadingComplete)
-        {
-            StaggeredPostList(items =viewModel.posts)
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                )
+                {
+                    Text(
+                        text = following.toString(),
+                        fontSize = 20.sp,
+                        fontFamily = customFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 8.dp),
+                        color = Color.White
+                    )
+                    Text(
+                        text = "Following",
+                        fontSize = 14.sp,
+                        fontFamily = customFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(top = 1.dp),
+                        color = grayShade4
+                    )
+                }
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)
+            )
+            {
+                grayButton(onClick = { onEditProfileClick.invoke() }, text = "Edit Profile")
+
+                grayButton(onClick = { onShareProfileClick.invoke() }, text = "Share Profile")
+            }
+
+
+            /**
+             * This is the navigation Row
+             * with 4 button Photos Tapes Stories Tagged
+             */
+
+            ProfileNavigation(selected = selected, onItemSelected = { selected = it })
+        }
+
+
+
+
+        when (selected) {
+            1 -> {
+                if (loadingComplete) {
+                    StaggeredPostList(items = viewModel.posts)
+                }
+
+            }
+
+            2 -> {
+                if (tapesLoadingComplete) {
+                    StaggeredTapesList(items = viewModel.tapes, context)
+                }
+
+
+            }
+
+            3 -> {
+
+            }
+
+            4 -> {
+
+            }
         }
     }
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .fillMaxHeight()
-//            .background(color = grayShade2)
-////            .verticalScroll(rememberScrollState())
-//        ,
-//    )
-//    {
-//
-//
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .fillMaxHeight()
-//                .padding(horizontal = 16.dp)
-//                .background(color = grayShade2),
-////                .nestedScroll(rememberNestedScrollInteropConnection())
-////                .verticalScroll(rememberScrollState())
-//            horizontalAlignment = Alignment.CenterHorizontally,
-//
-//
-//            ) {
-//
-//            Row(
-//                horizontalArrangement = Arrangement.SpaceBetween,
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                CircularIconButton(
-//                    icon = R.drawable.up_1,
-//                    modifier = Modifier.padding(top = 24.dp),
-//                    onClick = { onBackClick.invoke() }
-//                )
-//                ImageExample(
-//                    image = sharedViewModel.profileImage.value.toString(),
-//                    modifier = Modifier
-//                        .padding(top = 64.dp)
-//                )
-//                CircularIconButton(
-//                    icon = R.drawable.menu_meatballs,
-//                    modifier = Modifier.padding(top = 24.dp),
-//                    onClick = { onMenuClick.invoke() }
-//                )
-//            }
-//
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.Center,
-//                modifier = Modifier.fillMaxWidth()
-//            )
-//            {
-//                Text(
-//                    text = sharedViewModel.username.value.toString(),
-//                    fontSize = 24.sp,
-//                    fontFamily = customFontFamily,
-//                    fontWeight = FontWeight.Bold,
-//                    modifier = Modifier.padding(top = 8.dp, end = 8.dp),
-//                    color = Color.White
-//                )
-//                if (userVerifiedData.value == true) {
-//                    Image(
-//                        painter = painterResource(id = R.drawable.verified),
-//                        contentDescription = "Verified",
-//                        modifier = Modifier
-//                            .padding(top = 8.dp)
-//                            .size(24.dp)
-//                    )
-//                }
-//
-//            }
-//            Text(
-//                text = bio.value.toString(),
-//                fontSize = 14.sp,
-//                fontFamily = customFontFamily,
-//                modifier = Modifier.padding(top = 2.dp),
-//                color = grayShade5
-//            )
-//            Row(
-//                horizontalArrangement = Arrangement.SpaceAround,
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically
-//            )
-//            {
-//                Column(
-//                    horizontalAlignment = Alignment.CenterHorizontally,
-//                    verticalArrangement = Arrangement.Center,
-//                )
-//                {
-//                    Text(
-//                        text = postCount.toString(),
-//                        fontSize = 20.sp,
-//                        fontFamily = customFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        modifier = Modifier.padding(top = 8.dp),
-//                        color = Color.White
-//                    )
-//                    Text(
-//                        text = "Posts",
-//                        fontSize = 14.sp,
-//                        fontFamily = customFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        color = grayShade4
-//                    )
-//                }
-//
-//                Column(
-//                    horizontalAlignment = Alignment.CenterHorizontally,
-//                    verticalArrangement = Arrangement.Center,
-//                )
-//                {
-//                    Text(
-//                        text = followers.toString(),
-//                        fontSize = 20.sp,
-//                        fontFamily = customFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        modifier = Modifier.padding(top = 8.dp),
-//                        color = Color.White
-//                    )
-//                    Text(
-//                        text = "Followers",
-//                        fontSize = 14.sp,
-//                        fontFamily = customFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        modifier = Modifier.padding(top = 1.dp),
-//                        color = grayShade4
-//                    )
-//
-//                }
-//                Column(
-//                    horizontalAlignment = Alignment.CenterHorizontally,
-//                    verticalArrangement = Arrangement.Center,
-//                )
-//                {
-//                    Text(
-//                        text = following.toString(),
-//                        fontSize = 20.sp,
-//                        fontFamily = customFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        modifier = Modifier.padding(top = 8.dp),
-//                        color = Color.White
-//                    )
-//                    Text(
-//                        text = "Following",
-//                        fontSize = 14.sp,
-//                        fontFamily = customFontFamily,
-//                        fontWeight = FontWeight.Bold,
-//                        modifier = Modifier.padding(top = 1.dp),
-//                        color = grayShade4
-//                    )
-//                }
-//            }
-//            Row(
-//                horizontalArrangement = Arrangement.SpaceAround,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(top = 24.dp)
-//            )
-//            {
-//                grayButton(onClick = { onEditProfileClick.invoke() }, text = "Edit Profile")
-//
-//                grayButton(onClick = { onShareProfileClick.invoke() }, text = "Share Profile")
-//            }
-//
-//
-//            /**
-//             * This is the navigation Row
-//             * with 4 button Photos Tapes Stories Tagged
-//             */
-//
-//            ProfileNavigation(selected = selected, onItemSelected = { selected = it })
-//        }
-//
-//
-//
-//
-//        when (selected) {
-//            1 -> {
-//                if (loadingComplete) {
-//                    StaggeredPostList(items = viewModel.posts)
-//                }
-//
-//            }
-//
-//            2 -> {
-//                if (tapesLoadingComplete) {
-//                    StaggeredTapesList(items = viewModel.tapes, context)
-//                }
-//
-//
-//            }
-//
-//            3 -> {
-//
-//            }
-//
-//            4 -> {
-//
-//            }
-//        }
-//    }
 }
 
 
