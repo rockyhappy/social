@@ -125,7 +125,7 @@ fun ImageExample(image: String, modifier: Modifier = Modifier) {
 @Composable
 fun grayButton(onClick: () -> Unit, text: String) {
     Box(
-        modifier=Modifier
+        modifier = Modifier
             .wrapContentWidth()
     )
     {
@@ -152,7 +152,6 @@ fun grayButton(onClick: () -> Unit, text: String) {
         }
     }
 }
-
 
 
 @Composable
@@ -220,30 +219,17 @@ private fun ProfileNavigationItem(
 }
 
 @Composable
- fun StaggeredPostList(items: List<String>) {
-//    BoxWithConstraints(
-//        modifier = Modifier.fillMaxSize()
-//    ) {
-//        val constraints = constraints
-//        val width = constraints.maxWidth
-//        val height = constraints.maxHeight
-//        val context = LocalContext.current
-//        val items = remember { items }
-
-
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(2),
-            modifier = Modifier
-                .fillMaxSize()
-//                .nestedScroll(rememberNestedScrollInteropConnection())
-//                .verticalScroll(enabled = false, state = rememberScrollState())
-            ,
-//            state = rememberLazyStaggeredGridState(),
-//            userScrollEnabled = false,
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalItemSpacing = 16.dp
-        ) {
+fun StaggeredPostList(items: List<String>)
+{
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalItemSpacing = 16.dp
+    ) {
+        val t = 0
+        if (t == 0) {
 
             items(items.size) { item ->
                 AsyncImage(
@@ -260,13 +246,16 @@ private fun ProfileNavigationItem(
                         )
                 )
             }
-        }
-//    }
 
+        }
+        else{
+
+        }
+    }
 }
+
 @Composable
-fun StaggeredTapesList(items: List<Tapes>, context: Context)
-{
+fun StaggeredTapesList(items: List<Tapes>, context: Context) {
 
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
